@@ -83,5 +83,10 @@
   string jsonString = decrypt_memo_data([memo UTF8String]);
   return @(jsonString.c_str());
 }
-  
+
++ (NSString *)signMessage:(NSString *)username message:(NSString *)message {
+    string jsonString = sign_message([[NSString stringWithFormat:@"%@_%@", username, message] UTF8String]);
+
+    return @(jsonString.c_str());
+}
   @end

@@ -13,7 +13,7 @@ using namespace fc;
 //extern cybex_priv_key_type active_priv_key, owner_priv_key, memo_priv_key;
 typedef int64_t amount_type;
 string get_user_key(string user_name, string password);
-fc::ecc::private_key& get_private_key(string public_key);
+ecc::private_key& get_private_key(string public_key);
 void clear_user_key();
 void set_default_public_key(string pub_key_base58_str);
 
@@ -102,6 +102,8 @@ string cybex_gateway_query(
                            uint32_t offset,
                            uint32_t expiration
                            );
+
+string sign_message(string message);
 
 string decrypt_memo_data(
                          string memo_json_str

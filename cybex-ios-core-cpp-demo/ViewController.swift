@@ -13,9 +13,21 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        login()
+        testSignMessage()
     }
 
+    func login() {
+        let keys = BitShareCoordinator.getUserKeys("cybex-test", password: "cybextest123456")
+        print(keys)
+    }
 
+    func testSignMessage() {
+        let signString = BitShareCoordinator.signMessage("xxx", message: "xxx")
+
+        print(signString)
+
+    }
 }
 
