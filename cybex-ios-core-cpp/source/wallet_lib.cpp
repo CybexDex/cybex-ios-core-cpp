@@ -26,6 +26,28 @@ static void _init_transaction(
   tx.expiration = fc::time_point_sec(tx_expiration);
 }
 
+static void _set_balance_claim_operation(
+                                         balance_claim_operation& o,
+                                         unsigned_int fee_asset_id,
+                                         amount_type fee_amount,
+                                         unsigned_int deposit_to_account_id,
+                                         unsigned_int claimed_id,
+                                         string to_account_pub_key,
+                                         unsigned_int claimed_asset_id,
+                                         amount_type claimed_amount
+)
+{
+    o.fee.amount = fee_amount;
+    o.fee.asset_id.instance = fee_asset_id;
+
+    o.deposit_to_account = deposit_to_account_id;
+    o.balance_to_claim = claimed_id;
+    o.balance_owner_key = public_key_type(to_account_pub_key);
+
+    o.total_claimed.amount = claimed_amount;
+    o.total_claimed.asset_id.instance = claimed_asset_id;
+}
+
 static void _set_transfer_operation(
                                     transfer_operation& o,
                                     unsigned_int from_id, /* instance id of from account */
@@ -39,26 +61,26 @@ static void _set_transfer_operation(
                                     string to_memo_pub_key /* to memo, in base58 str*/
 )
 {
-  o.fee.amount = fee_amount;
-  o.fee.asset_id.instance = fee_asset_id;
-  
-  o.from.instance = from_id;
-  o.to.instance = to_id;
-  
-  o.amount.amount = amount;
-  o.amount.asset_id = asset_id;
-  
-  if(memo.size())
-  {
-    o.memo = memo_data();
-    //o.memo->from = fc::ecc::public_key::from_base58(from_memo_pub_key);
-    //o.memo->to = fc::ecc::public_key::from_base58(to_memo_pub_key);
-    fc::ecc::private_key memo_priv_key = get_private_key(from_memo_pub_key);
-//    fc::ecc::private_key memo_priv_key = fc::ecc::private_key();
-    o.memo->from = public_key_type(from_memo_pub_key);
-    o.memo->to = public_key_type(to_memo_pub_key);
-    o.memo->set_message(memo_priv_key, o.memo->to, memo);
-  }
+    o.fee.amount = fee_amount;
+    o.fee.asset_id.instance = fee_asset_id;
+
+    o.from.instance = from_id;
+    o.to.instance = to_id;
+
+    o.amount.amount = amount;
+    o.amount.asset_id = asset_id;
+
+    if(memo.size())
+    {
+        o.memo = memo_data();
+        //o.memo->from = fc::ecc::public_key::from_base58(from_memo_pub_key);
+        //o.memo->to = fc::ecc::public_key::from_base58(to_memo_pub_key);
+        fc::ecc::private_key memo_priv_key = get_private_key(from_memo_pub_key);
+        //    fc::ecc::private_key memo_priv_key = fc::ecc::private_key();
+        o.memo->from = public_key_type(from_memo_pub_key);
+        o.memo->to = public_key_type(to_memo_pub_key);
+        o.memo->set_message(memo_priv_key, o.memo->to, memo);
+    }
 }
 
 string transfer(
@@ -271,6 +293,53 @@ string cybex_gateway_query(
   trx.signer = active_priv_key.sign_compact(enc.result());
   return fc::json::to_string(trx);
 } catch(...){return "";}}
+
+string get_claim_balance_operation (
+                                    unsigned_int fee_asset_id,
+                                    amount_type fee_amount,
+                                    unsigned_int deposit_to_account_id,
+                                    unsigned_int claimed_id,
+                                    string to_account_pub_key,
+                                    unsigned_int claimed_asset_id,
+                                    amount_type claimed_amount
+                                    )
+{ try {
+    balance_claim_operation o;
+    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, to_account_pub_key, claimed_asset_id, claimed_amount);
+    variant op_json(o);
+    return fc::json::to_string(op_json);
+} catch(...) {return "";}}
+
+string sign_claim_balance(
+                          uint16_t ref_block_num,
+                          string ref_block_id_hex_str,
+                          uint32_t expiration, /* expiration time in utc seconds */
+                          string chain_id_str, /* chain id in base58 */
+                          unsigned_int fee_asset_id,
+                          amount_type fee_amount,
+                          unsigned_int deposit_to_account_id,
+                          unsigned_int claimed_id,
+                          string to_account_pub_key,
+                          unsigned_int claimed_asset_id,
+                          amount_type claimed_amount
+                          )
+{ try{
+    fc::ecc::private_key active_priv_key = get_private_key("");
+
+    balance_claim_operation o;
+
+    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, to_account_pub_key, claimed_asset_id, claimed_amount);
+
+    signed_transaction signed_tx;
+    _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+    signed_tx.operations.push_back(o);
+
+    chain_id_type chain_id(chain_id_str);
+    signed_tx.sign(active_priv_key, chain_id);
+    variant tx(signed_tx);
+    return fc::json::to_string(tx);
+} catch(...) {return "";}}
 
 string sign_message(string message) {
     try{
