@@ -103,6 +103,30 @@ string cybex_gateway_query(
                            uint32_t expiration
                            );
 
+string get_claim_balance_operation (
+                          unsigned_int fee_asset_id,
+                          amount_type fee_amount,
+                          unsigned_int deposit_to_account_id,
+                          unsigned_int claimed_id,
+                          string to_account_pub_key,
+                          unsigned_int claimed_asset_id,
+                          amount_type claimed_amount
+                          );
+
+string sign_claim_balance(
+                          uint16_t ref_block_num,
+                          string ref_block_id_hex_str,
+                          uint32_t expiration, /* expiration time in utc seconds */
+                          string chain_id_str, /* chain id in base58 */
+                          unsigned_int fee_asset_id,
+                          amount_type fee_amount,
+                          unsigned_int deposit_to_account_id,
+                          unsigned_int claimed_id,
+                          string to_account_pub_key,
+                          unsigned_int claimed_asset_id,
+                          amount_type claimed_amount
+                        );
+
 string sign_message(string message);
 
 string decrypt_memo_data(
