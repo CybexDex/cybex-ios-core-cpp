@@ -95,24 +95,24 @@
                   expiration:(NSTimeInterval)expiration
                     chain_id:(NSString *)chain_id
                 fee_asset_id:(int)fee_asset_id
-                  fee_amount:(int)fee_amount
+                  fee_amount:(int64_t)fee_amount
        deposit_to_account_id:(int)deposit_to_account_id
                   claimed_id:(int)claimed_id
             claimed_asset_id:(int)claimed_asset_id
-              claimed_amount:(int)claimed_amount
-          to_account_pub_key:(NSString *)to_account_pub_key {
-    string jsonString = sign_claim_balance(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, [to_account_pub_key UTF8String], claimed_asset_id, claimed_amount);
+              claimed_amount:(int64_t)claimed_amount
+          claimed_own:(NSString *)claimed_own {
+    string jsonString = sign_claim_balance(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, [claimed_own UTF8String], claimed_asset_id, claimed_amount);
     return @(jsonString.c_str());
 }
 
 + (NSString *)getClaimedOperation:(int)fee_asset_id
-                       fee_amount:(int)fee_amount
+                       fee_amount:(int64_t)fee_amount
             deposit_to_account_id:(int)deposit_to_account_id
                        claimed_id:(int)claimed_id
                  claimed_asset_id:(int)claimed_asset_id
-                   claimed_amount:(int)claimed_amount
-               to_account_pub_key:(NSString *)to_account_pub_key {
-    string jsonString = get_claim_balance_operation(fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, [to_account_pub_key UTF8String], claimed_asset_id, claimed_amount);
+                   claimed_amount:(int64_t)claimed_amount
+               claimed_own:(NSString *)claimed_own {
+    string jsonString = get_claim_balance_operation(fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, [claimed_own UTF8String], claimed_asset_id, claimed_amount);
     return @(jsonString.c_str());
 }
 

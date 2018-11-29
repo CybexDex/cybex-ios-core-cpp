@@ -32,7 +32,7 @@ static void _set_balance_claim_operation(
                                          amount_type fee_amount,
                                          unsigned_int deposit_to_account_id,
                                          unsigned_int claimed_id,
-                                         string to_account_pub_key,
+                                         string pubkey,
                                          unsigned_int claimed_asset_id,
                                          amount_type claimed_amount
 )
@@ -42,11 +42,13 @@ static void _set_balance_claim_operation(
 
     o.deposit_to_account = deposit_to_account_id;
     o.balance_to_claim = claimed_id;
-    o.balance_owner_key = public_key_type(to_account_pub_key);
+
+    o.balance_owner_key = public_key_type(pubkey);
 
     o.total_claimed.amount = claimed_amount;
     o.total_claimed.asset_id.instance = claimed_asset_id;
 }
+
 
 static void _set_transfer_operation(
                                     transfer_operation& o,
@@ -299,13 +301,13 @@ string get_claim_balance_operation (
                                     amount_type fee_amount,
                                     unsigned_int deposit_to_account_id,
                                     unsigned_int claimed_id,
-                                    string to_account_pub_key,
+                                    string claimed_own,
                                     unsigned_int claimed_asset_id,
                                     amount_type claimed_amount
                                     )
 { try {
     balance_claim_operation o;
-    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, to_account_pub_key, claimed_asset_id, claimed_amount);
+    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, claimed_own, claimed_asset_id, claimed_amount);
     variant op_json(o);
     return fc::json::to_string(op_json);
 } catch(...) {return "";}}
@@ -319,7 +321,7 @@ string sign_claim_balance(
                           amount_type fee_amount,
                           unsigned_int deposit_to_account_id,
                           unsigned_int claimed_id,
-                          string to_account_pub_key,
+                          string claimed_own,
                           unsigned_int claimed_asset_id,
                           amount_type claimed_amount
                           )
@@ -328,7 +330,9 @@ string sign_claim_balance(
 
     balance_claim_operation o;
 
-    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, to_account_pub_key, claimed_asset_id, claimed_amount);
+    string pubkey = get_pubkey_from_address(claimed_own);
+
+    _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, pubkey, claimed_asset_id, claimed_amount);
 
     signed_transaction signed_tx;
     _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);

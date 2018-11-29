@@ -56,6 +56,8 @@ std::string key_to_wif(const fc::sha256& secret )
 //cybex_priv_key_type active_priv_key, owner_priv_key, memo_priv_key;
 
 static map<string, fc::ecc::private_key> stored_keys;
+static map<string, vector<string>> stored_addresses;
+
 static string default_public_key = "";
 
 
@@ -67,11 +69,17 @@ void set_default_public_key(string pub_key_base58_str)
 void clear_user_key()
 {
     stored_keys.clear();
+    stored_addresses.clear();
 }
 
 void add_user_key(string public_key, fc::ecc::private_key key)
 {
     stored_keys.insert(map<string, fc::ecc::private_key>::value_type(public_key, key));
+}
+
+void add_address(string public_key, vector<string> addresses)
+{
+    stored_addresses.insert(map<string, vector<string>>::value_type(public_key, addresses));
 }
 
 fc::ecc::private_key& get_private_key(string public_key)
@@ -87,6 +95,21 @@ fc::ecc::private_key& get_private_key(string public_key)
 
     FC_THROW_EXCEPTION(fc::exception, "private key not found");
 }
+
+string get_pubkey_from_address(string address)
+{
+    if(address == "")
+        FC_THROW_EXCEPTION(fc::exception, "private key not found");
+    else
+        for (auto &i : stored_addresses) {
+            if ( std::find(i.second.begin(), i.second.end(), address) != i.second.end() ) {
+                return string(i.first.c_str());
+            }
+        }
+
+    FC_THROW_EXCEPTION(fc::exception, "private key not found");
+}
+
 
 fc::mutable_variant_object get_dev_key(string type, string secret)
 {
@@ -120,7 +143,13 @@ fc::mutable_variant_object get_dev_key(string type, string secret)
   ( "uncompressed", string(graphene::chain::address(uncompress_pts_addr)))
   ;
 
+    vector<string> addresses;
+    addresses.push_back(address);
+    addresses.push_back(string(graphene::chain::address(compress_pts_addr)));
+    addresses.push_back(string(graphene::chain::address(uncompress_pts_addr)));
+
   add_user_key(public_key, priv_key);
+    add_address(public_key, addresses);
   if(type == "active")
     default_public_key = public_key;
 
