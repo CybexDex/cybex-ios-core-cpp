@@ -114,8 +114,43 @@ string transfer(
   
   chain_id_type chain_id(chain_id_str);
   signed_tx.sign(active_priv_key, chain_id);
+
+
   variant tx(signed_tx);
   return fc::json::to_string(tx);
+} catch(...) {return "";}}
+
+string transaction_id(
+                uint16_t ref_block_num,
+                string ref_block_id_hex_str,
+                uint32_t expiration, /* expiration time in utc seconds */
+                string chain_id_str, /* chain id in base58 */
+                unsigned_int from_id, /* instance id of from account */
+                unsigned_int to_id, /* instance id of to account */
+                amount_type amount, /* amount to be transfered */
+                unsigned_int asset_id, /* instance id of asset to be transfered */
+                amount_type fee_amount, /* amount of fee */
+                unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                string from_memo_pub_key, /* public memo, in base58 str */
+                string to_memo_pub_key /* to memo, in base58 str*/
+)
+{ try{
+    fc::ecc::private_key active_priv_key = get_private_key("");
+
+    transfer_operation o;
+
+    _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key);
+
+    signed_transaction signed_tx;
+    _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+    signed_tx.operations.push_back(o);
+
+    chain_id_type chain_id(chain_id_str);
+    signed_tx.sign(active_priv_key, chain_id);
+
+    return signed_tx.id().str();
 } catch(...) {return "";}}
 
 string get_transfer_op_json(

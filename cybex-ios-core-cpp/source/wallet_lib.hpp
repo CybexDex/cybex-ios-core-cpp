@@ -18,6 +18,21 @@ void clear_user_key();
 void set_default_public_key(string pub_key_base58_str);
 string get_pubkey_from_address(string address);
 
+string transaction_id(
+                     uint16_t ref_block_num,
+                     string ref_block_id_hex_str,
+                     uint32_t expiration, /* expiration time in utc seconds */
+                     string chain_id_str, /* chain id in base58 */
+                     unsigned_int from_id, /* instance id of from account */
+                     unsigned_int to_id, /* instance id of to account */
+                     amount_type amount, /* amount to be transfered */
+                     unsigned_int asset_id, /* instance id of asset to be transfered */
+                     amount_type fee_amount, /* amount of fee */
+                     unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                     string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                     string from_memo_pub_key, /* public memo, in base58 str */
+                     string to_memo_pub_key /* to memo, in base58 str*/
+);
 string transfer(
                 uint16_t ref_block_num,
                 string ref_block_id_hex_str,
