@@ -22,6 +22,9 @@ class ViewController: UIViewController {
     }
 
     func login() {
+        let k = get_user_key(UnsafePointer<Int8>("cybex-test"), UnsafePointer<Int8>("cybextest123456"))
+        let a = String(cString: k!)
+
         let keys = BitShareCoordinator.getUserKeys("cybex-test", password: "cybextest123456")
         print(keys)
     }

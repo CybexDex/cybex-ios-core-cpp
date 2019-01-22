@@ -6,7 +6,6 @@
 
 using namespace std;
 using namespace fc;
-
 //#include "types.hpp"
 
 //typedef fc::optional<fc::ecc::private_key> cybex_priv_key_type;
@@ -50,6 +49,26 @@ string transfer(
                 string to_memo_pub_key
                 );
 
+string transfer_with_vesting(
+                uint16_t ref_block_num,
+                string ref_block_id_hex_str,
+                uint32_t expiration, /* expiration time in utc seconds */
+                string chain_id_str,
+
+                unsigned_int from_id, /* instance id of from account */
+                unsigned_int to_id, /* instance id of to account */
+                amount_type amount, /* amount to be transfered */
+                unsigned_int asset_id, /* instance id of asset to be transfered */
+                amount_type fee_amount, /* amount of fee */
+                unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                string from_memo_pub_key, /* public memo */
+                string to_memo_pub_key,
+
+                uint64_t vesting_period,
+                string to_account_pub_key
+                );
+
 string get_transfer_op_json(
                             unsigned_int from_id, /* instance id of from account */
                             unsigned_int to_id, /* instance id of to account */
@@ -60,6 +79,21 @@ string get_transfer_op_json(
                             string memo, /* memo data to be transfered, if no memo data, just use empty string */
                             string from_memo_pub_key, /* public memo */
                             string to_memo_pub_key
+                            );
+
+string get_transfer_with_vesting_op_json(
+                            unsigned_int from_id, /* instance id of from account */
+                            unsigned_int to_id, /* instance id of to account */
+                            amount_type amount, /* amount to be transfered */
+                            unsigned_int asset_id, /* instance id of asset to be transfered */
+                            amount_type fee_amount, /* amount of fee */
+                            unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                            string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                            string from_memo_pub_key, /* public memo */
+                            string to_memo_pub_key,
+
+                            uint64_t vesting_period,
+                            string to_account_pub_key
                             );
 
 string limit_order_create(

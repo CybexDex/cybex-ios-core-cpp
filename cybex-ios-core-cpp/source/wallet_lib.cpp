@@ -8,6 +8,7 @@
 #include "transaction.hpp"
 #include "wallet_lib.hpp"
 #include "cybex_gateway_query.hpp"
+#include "walletExtern.h"
 
 using namespace std;
 using namespace fc;
@@ -60,7 +61,9 @@ static void _set_transfer_operation(
                                     unsigned_int fee_asset_id, /* instance id of asset to pay fee */
                                     string memo, /* memo data to be transfered, if no memo data, just use empty string */
                                     string from_memo_pub_key, /* public memo, in base58 str */
-                                    string to_memo_pub_key /* to memo, in base58 str*/
+                                    string to_memo_pub_key, /* to memo, in base58 str*/
+                                    uint64_t vesting_period,
+                                    string to_account_pub_key
 )
 {
     o.fee.amount = fee_amount;
@@ -82,6 +85,13 @@ static void _set_transfer_operation(
         o.memo->from = public_key_type(from_memo_pub_key);
         o.memo->to = public_key_type(to_memo_pub_key);
         o.memo->set_message(memo_priv_key, o.memo->to, memo);
+    }
+
+    if (to_account_pub_key.size()) {
+        struct cybex_ext_vesting v;
+        v.public_key = public_key_type(to_account_pub_key);
+        v.vesting_period = vesting_period;
+        o.extensions.insert(v);
     }
 }
 
@@ -105,7 +115,7 @@ string transfer(
   
   transfer_operation o;
   
-  _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key);
+  _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
   
   signed_transaction signed_tx;
   _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
@@ -119,6 +129,47 @@ string transfer(
   variant tx(signed_tx);
   return fc::json::to_string(tx);
 } catch(...) {return "";}}
+
+string transfer_with_vesting(
+                             uint16_t ref_block_num,
+                             string ref_block_id_hex_str,
+                             uint32_t expiration, /* expiration time in utc seconds */
+                             string chain_id_str,
+
+                             unsigned_int from_id, /* instance id of from account */
+                             unsigned_int to_id, /* instance id of to account */
+                             amount_type amount, /* amount to be transfered */
+                             unsigned_int asset_id, /* instance id of asset to be transfered */
+                             amount_type fee_amount, /* amount of fee */
+                             unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                             string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                             string from_memo_pub_key, /* public memo */
+                             string to_memo_pub_key,
+
+                             uint64_t vesting_period,
+                             string to_account_pub_key
+                             )
+{
+    try{
+        fc::ecc::private_key active_priv_key = get_private_key("");
+
+        transfer_operation o;
+
+        _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, vesting_period, to_account_pub_key);
+
+        signed_transaction signed_tx;
+        _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+        signed_tx.operations.push_back(o);
+
+        chain_id_type chain_id(chain_id_str);
+        signed_tx.sign(active_priv_key, chain_id);
+
+
+        variant tx(signed_tx);
+        return fc::json::to_string(tx);
+    } catch(...) {return "";}
+}
 
 string transaction_id(
                 uint16_t ref_block_num,
@@ -140,7 +191,7 @@ string transaction_id(
 
     transfer_operation o;
 
-    _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key);
+    _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
 
     signed_transaction signed_tx;
     _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
@@ -166,10 +217,33 @@ string get_transfer_op_json(
                             )
 { try {
   transfer_operation o;
-  _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key);
+  _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
   variant op_json(o);
   return fc::json::to_string(op_json);
 } catch(...) {return "";}}
+
+string get_transfer_with_vesting_op_json(
+                                         unsigned_int from_id, /* instance id of from account */
+                                         unsigned_int to_id, /* instance id of to account */
+                                         amount_type amount, /* amount to be transfered */
+                                         unsigned_int asset_id, /* instance id of asset to be transfered */
+                                         amount_type fee_amount, /* amount of fee */
+                                         unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                                         string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                                         string from_memo_pub_key, /* public memo */
+                                         string to_memo_pub_key,
+
+                                         uint64_t vesting_period,
+                                         string to_account_pub_key
+                                         )
+{
+    try {
+        transfer_operation o;
+        _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, vesting_period, to_account_pub_key);
+        variant op_json(o);
+        return fc::json::to_string(op_json);
+    } catch(...) {return "";}
+}
 
 void _set_limit_order_create_operation(
                                        limit_order_create_operation &o,
@@ -410,3 +484,6 @@ string decrypt_memo_data(
   return m.get_message(memo_priv_key, memo_pub_key);
 } catch(...){return "";}}
 
+void wallet_test() {
+    printf("s");
+}

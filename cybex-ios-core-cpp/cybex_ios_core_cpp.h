@@ -17,3 +17,4 @@ FOUNDATION_EXPORT const unsigned char cybex_ios_core_cppVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <cybex_ios_core_cpp/PublicHeader.h>
 
 #import <cybex_ios_core_cpp/BitShareCoordinator.h>
+@import CybexCoreCrypto;
