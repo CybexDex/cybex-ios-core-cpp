@@ -59,6 +59,17 @@
   return @(jsonString.c_str());
 }
 
++ (NSString *)getTransactionWithVesting:(int)block_num block_id:(NSString *)block_id
+                             expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+                           from_user_id:(int)from_user_id to_user_id:(int)to_user_id
+                               asset_id:(int)asset_id receive_asset_id:(int)receive_asset_id
+                                 amount:(int64_t)amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount
+                                   memo:(NSString *)memo from_memo_key:(NSString *)from_memo_key to_memo_key:(NSString *)to_memo_key vestingPeroid:(uint64_t)peroid toPubKey:(NSString *)toPubKey {
+    string jsonString = transfer_with_vesting(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], from_user_id, to_user_id, amount, asset_id, fee_amount, fee_id, [memo UTF8String], [from_memo_key UTF8String], [to_memo_key UTF8String], peroid, [toPubKey UTF8String]);
+
+    return @(jsonString.c_str());
+}
+
 + (NSString *)getTransactionId:(int)block_num block_id:(NSString *)block_id
                     expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
                   from_user_id:(int)from_user_id to_user_id:(int)to_user_id
@@ -74,7 +85,13 @@
   
   return @(jsonString.c_str());
 }
-  
+
++ (NSString *)getTransterWithVestingOperation:(int)from_user_id to_user_id:(int)to_user_id asset_id:(int)asset_id amount:(int64_t)amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount memo:(NSString *)memo from_memo_key:(NSString *)from_memo_key to_memo_key:(NSString *)to_memo_key vestingPeroid:(uint64_t)peroid toPubKey:(NSString *)toPubKey {
+    string jsonString = get_transfer_with_vesting_op_json(from_user_id, to_user_id, amount, asset_id, fee_amount, fee_id, [memo UTF8String], [from_memo_key UTF8String], [to_memo_key UTF8String], peroid, [toPubKey UTF8String]);
+
+    return @(jsonString.c_str());
+}
+
 + (void)resetDefaultPublicKey:(NSString *)str {
   set_default_public_key([str UTF8String]);
 }
