@@ -6,8 +6,9 @@
 //  Copyright © 2018年 Cybex. All rights reserved.
 //
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface BitShareCoordinator : NSObject
-  
 + (NSString *)getUserKeys:(NSString *)username password:(NSString *)password;
   
   /**
@@ -83,4 +84,7 @@
                            claimed_asset_id:(int)claimed_asset_id
                        claimed_amount:(int64_t)claimed_amount
                              claimed_own:(NSString *)claimed_own;
-  @end
+
+@end
+
+NS_ASSUME_NONNULL_END

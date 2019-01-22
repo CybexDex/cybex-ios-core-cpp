@@ -9,9 +9,10 @@
 #import "BitShareCoordinator.h"
 
 #include "wallet_lib.hpp"
+#include "transaction.hpp"
 
 @implementation BitShareCoordinator
-  
+
 + (NSString *)getUserKeys:(NSString *)username password:(NSString *)password {
   string keys = get_user_key([username UTF8String], [password UTF8String]);
   
