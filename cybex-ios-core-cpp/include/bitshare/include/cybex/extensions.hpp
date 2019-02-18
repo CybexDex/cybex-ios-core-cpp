@@ -31,7 +31,11 @@ struct cybex_ext_xfer_to_many {
   vector<struct cybex_xfer_item>  list;
 };
 
-void cybex_ext_vesting_check(const account_object & acc, const cybex_ext_vesting & ext1) ;
+struct cxl_trx_id {
+    transaction_id_type  trx_id;
+};
+
+void cybex_ext_vesting_check(const account_object & to_account, const cybex_ext_vesting & ext1);
 
 } }
 
@@ -41,3 +45,4 @@ FC_REFLECT( graphene::chain::cybex_ext_swap,(msg) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_name,(name)(asset_sym)(fee_asset_sym)(hw_cookie1)(hw_cookie2) )
 FC_REFLECT( graphene::chain::cybex_xfer_item,(name)(amount) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_many,(list) )
+FC_REFLECT( graphene::chain::cxl_trx_id,(trx_id) )

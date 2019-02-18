@@ -37,8 +37,9 @@ namespace graphene { namespace chain {
       asset                     fee;
       account_id_type           owner;
       asset_id_type             asset_id;
-      uint64_t                  t;
-      uint64_t                  u;
+      uint32_t                  t;
+      uint32_t                  u;
+      extensions_type           extensions;
 
       account_id_type   fee_payer()const { return owner; }
       void              validate()const;
@@ -53,9 +54,10 @@ namespace graphene { namespace chain {
 
       asset                     fee;
       account_id_type           buyer;
-      int64_t                valuation;
-      int64_t                cap;
+      int64_t                   valuation;
+      int64_t                   cap;
       crowdfund_id_type         crowdfund;
+      extensions_type           extensions;
       //address                   pubkey;
 
       account_id_type   fee_payer()const { return buyer; }
@@ -72,17 +74,68 @@ namespace graphene { namespace chain {
       asset                     fee;
       account_id_type           buyer;
       crowdfund_contract_id_type            crowdfund_contract;
+      extensions_type           extensions;
 
       account_id_type   fee_payer()const { return buyer; }
       void              validate()const;
       //share_type        calculate_fee(const fee_parameters_type& k)const;
     };
+    struct fill_crowdfund_operation : public base_operation
+    {
+        struct fee_parameters_type {};
+
+        fill_crowdfund_operation() {};
+
+        crowdfund_id_type       crowdfund_id;
+        account_id_type         buyer;
+        asset                   fee;
+
+        account_id_type         fee_payer() const { return buyer; }
+        void                    validate() const { FC_ASSERT( !"virtual operation" ); }
+        share_type              calculate_fee(const fee_parameters_type& k) const { return 0; }
+    };
 
 } } // namespace graphene::chain
 
 FC_REFLECT( graphene::chain::initiate_crowdfund_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::initiate_crowdfund_operation, (fee)(owner)(asset_id )(t)(u) )
+FC_REFLECT( graphene::chain::initiate_crowdfund_operation, (fee)(owner)(asset_id )(t)(u)(extensions) )
 FC_REFLECT( graphene::chain::participate_crowdfund_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::participate_crowdfund_operation, (fee)(buyer)(valuation)(cap)(crowdfund) )
+FC_REFLECT( graphene::chain::participate_crowdfund_operation, (fee)(buyer)(valuation)(cap)(crowdfund)(extensions) )
 FC_REFLECT( graphene::chain::withdraw_crowdfund_operation::fee_parameters_type, (fee)(price_per_kbyte) )
-FC_REFLECT( graphene::chain::withdraw_crowdfund_operation, (fee)(buyer)(crowdfund_contract) )
+FC_REFLECT( graphene::chain::withdraw_crowdfund_operation, (fee)(buyer)(crowdfund_contract)(extensions) )
+FC_REFLECT( graphene::chain::fill_crowdfund_operation::fee_parameters_type, )
+FC_REFLECT( graphene::chain::fill_crowdfund_operation, (crowdfund_id)(buyer)(fee) )
+
+#define db_notify_crowdfund                             \
+   void operator()( const withdraw_crowdfund_operation& op ) \
+   {                                                     \
+      _impacted.insert( op.buyer );                      \
+   }                                                     \
+   void operator()( const participate_crowdfund_operation& op ) \
+   {                                                     \
+      _impacted.insert( op.buyer );                      \
+   }                                                     \
+   void operator()( const initiate_crowdfund_operation& op ) \
+   {                                                     \
+      _impacted.insert( op.owner );                      \
+   }                                                     \
+   void operator()( const fill_crowdfund_operation& op ) \
+   {                                                     \
+      _impacted.insert( op.buyer );                      \
+   }
+
+#define impact_visit_crowdfund db_notify_crowdfund
+
+#define crowdfund_object_type_to_accounts                 \
+        case crowdfund_object_type:{                      \
+           const auto& aobj = dynamic_cast<const crowdfund_object*>(obj);\
+           assert( aobj != nullptr );                     \
+           accounts.insert( aobj->owner );                \
+           break;                                         \
+        } case crowdfund_contract_object_type:{           \
+           const auto& aobj = dynamic_cast<const crowdfund_contract_object*>(obj);\
+           assert( aobj != nullptr );                     \
+           accounts.insert( aobj->owner );                \
+           break;                                         \
+        }                                                 \
+

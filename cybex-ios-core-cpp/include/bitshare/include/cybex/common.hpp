@@ -3,7 +3,6 @@
 
 namespace graphene { namespace chain { namespace cybex {
 
-
 extern graphene::chain::database* _db;
 
 static inline graphene::chain::database & database(){  return  *_db; }

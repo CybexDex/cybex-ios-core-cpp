@@ -27,7 +27,7 @@
 #include <fc/reflect/reflect.hpp>
 
 namespace graphene { namespace chain {
-
+    using fc::unsigned_int;
 template< typename T >
 struct extension
 {
@@ -89,7 +89,7 @@ struct graphene_extension_unpack_visitor
 {
    graphene_extension_unpack_visitor( Stream& s, T& v ) : stream(s), value(v)
    {
-      unsigned_int c;
+       fc::unsigned_int c;
       fc::raw::unpack( stream, c );
       count_left = c.value;
       maybe_read_next_which();
@@ -99,7 +99,7 @@ struct graphene_extension_unpack_visitor
    {
       if( count_left > 0 )
       {
-         unsigned_int w;
+          fc::unsigned_int w;
          fc::raw::unpack( stream, w );
          next_which = w.value;
       }

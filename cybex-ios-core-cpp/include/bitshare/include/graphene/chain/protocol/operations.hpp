@@ -41,6 +41,7 @@
 
 #include <cybex/crowdfund_ops.hpp>
 #include <cybex/vesting_ops.hpp>
+#include <cybex/dice_bet_ops.hpp>
 
 namespace graphene { namespace chain {
 
@@ -98,7 +99,16 @@ namespace graphene { namespace chain {
             initiate_crowdfund_operation,
             participate_crowdfund_operation,
             withdraw_crowdfund_operation,
-            cancel_vesting_operation
+            fill_crowdfund_operation,       // VIRTUAL
+            cancel_vesting_operation,
+            bid_collateral_operation,
+            execute_bid_operation,          // VIRTUAL
+            cancel_all_operation,
+            initiate_dice_bet_operation,
+            deposit_dice_bet_operation,
+            withdraw_dice_bet_operation,
+            participate_dice_bet_operation,
+            dice_bet_clearing_operation     // VIRTUAL
          > operation;
 
    /// @} // operations group

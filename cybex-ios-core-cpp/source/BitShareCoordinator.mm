@@ -48,7 +48,20 @@
   string jsonString = get_cancel_order_json(order_id, user_id, fee_amount, fee_id);
   return @(jsonString.c_str());
 }
-  
+
++ (NSString *)cancelAllLimitOrder:(int)block_num block_id:(NSString *)block_id
+                       expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+                          user_id:(int)user_id asset_id:(int)asset_id receive_asset_id:(int)receive_asset_id
+                           fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
+    string jsonString = cancel_all_order(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], asset_id, receive_asset_id, user_id, fee_amount, fee_id);
+    return @(jsonString.c_str());
+}
+
++ (NSString *)cancelAllLimitOrderOperation:(int)asset_id receive_asset_id:(int)receive_asset_id user_id:(int)user_id fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
+    string jsonString = get_cancel_all_order_json(asset_id, receive_asset_id, user_id, fee_amount, fee_id);
+    return @(jsonString.c_str());
+}
+
 + (NSString *)getTransaction:(int)block_num block_id:(NSString *)block_id
                   expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
                 from_user_id:(int)from_user_id to_user_id:(int)to_user_id

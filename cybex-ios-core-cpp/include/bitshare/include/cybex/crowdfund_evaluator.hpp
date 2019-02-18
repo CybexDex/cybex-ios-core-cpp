@@ -43,7 +43,10 @@ namespace graphene { namespace chain {
          typedef participate_crowdfund_operation operation_type;
          void_result do_evaluate( const participate_crowdfund_operation& o );
          object_id_type do_apply( const participate_crowdfund_operation& o );
-
+         const account_object * from_account;
+         const crowdfund_object * crowdfund;
+         const asset_object * crowdfund_asset;
+         uint32_t s;  
    };
 
    class withdraw_crowdfund_evaluator : public evaluator<withdraw_crowdfund_evaluator>
@@ -53,6 +56,11 @@ namespace graphene { namespace chain {
 
          void_result do_evaluate( const withdraw_crowdfund_operation& o );
          void_result do_apply( const withdraw_crowdfund_operation& o );
+
+         const crowdfund_contract_object *contract;
+         const crowdfund_object  * crowdfund;
+         const account_object *owner;
+         uint32_t s;
    };
 
 } } // graphene::chain

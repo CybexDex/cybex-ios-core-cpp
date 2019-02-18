@@ -137,8 +137,29 @@ string cancel_order(
                     unsigned_int fee_asset_id /* instance id of asset to pay fee */
 );
 
+string cancel_all_order(
+                    uint16_t ref_block_num,
+                    string ref_block_id_hex_str,
+                    uint32_t expiration, /* expiration time in utc seconds */
+                    string chain_id_str,
+
+                    unsigned_int sell_asset_id,
+                    unsigned_int receive_asset_id,
+                    unsigned_int fee_paying_account_id, /* instance id of fee paying account */
+                    amount_type fee_amount, /* amount of fee */
+                    unsigned_int fee_asset_id /* instance id of asset to pay fee */
+);
+
+
 string get_cancel_order_json(
                              unsigned_int order_id, /* instance id of order */
+                             unsigned_int fee_paying_account_id, /* instance id of fee paying account */
+                             amount_type fee_amount, /* amount of fee */
+                             unsigned_int fee_asset_id /* instance id of asset to pay fee */
+);
+string get_cancel_all_order_json(
+                             unsigned_int sell_asset_id,
+                             unsigned_int receive_asset_id,
                              unsigned_int fee_paying_account_id, /* instance id of fee paying account */
                              amount_type fee_amount, /* amount of fee */
                              unsigned_int fee_asset_id /* instance id of asset to pay fee */

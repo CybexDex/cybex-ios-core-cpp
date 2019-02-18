@@ -15,10 +15,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         login()
-        testSignMessage()
-        testClaim()
-
-        testTransactionId()
+//        testSignMessage()
+//        testClaim()
+//
+//        testTransactionId()
+        testCancelAllOrders()
     }
 
     func login() {
@@ -42,6 +43,11 @@ class ViewController: UIViewController {
     func testTransactionId() {
         let id = BitShareCoordinator.getTransactionId(0, block_id: "", expiration: 600, chain_id: "", from_user_id: 0, to_user_id: 0, asset_id: 0, receive_asset_id: 0, amount: 0, fee_id: 0, fee_amount: 0, memo: "", from_memo_key: "", to_memo_key: "")
         print(id)
+    }
+
+    func testCancelAllOrders() {
+        let operation = BitShareCoordinator.cancelAllLimitOrder(0, block_id: "", expiration: 600, chain_id: "", user_id: 27765, asset_id: 10, receive_asset_id: 20, fee_id: 0, fee_amount: 10000)
+        print(operation)
     }
 }
 

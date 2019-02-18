@@ -335,6 +335,22 @@ static void _set_cancel_order_operation(
   o.fee.asset_id = fee_asset_id;
 }
 
+static void _set_cancel_all_order_operation(
+                                        cancel_all_operation &o,
+                                        unsigned_int sell_asset_id,
+                                        unsigned_int receive_asset_id,
+                                        unsigned_int fee_paying_account_id, /* instance id of fee paying account */
+                                        amount_type fee_amount, /* amount of fee */
+                                        unsigned_int fee_asset_id /* instance id of asset to pay fee */
+)
+{
+    o.seller = fee_paying_account_id;
+    o.receive_asset_id = receive_asset_id;
+    o.sell_asset_id = sell_asset_id;
+    o.fee.amount = fee_amount;
+    o.fee.asset_id = fee_asset_id;
+}
+
 string cancel_order(
                     uint16_t ref_block_num,
                     string ref_block_id_hex_str,
@@ -364,6 +380,37 @@ string cancel_order(
   return fc::json::to_string(tx);
 } catch(...){return "";}}
 
+string cancel_all_order(
+                        uint16_t ref_block_num,
+                        string ref_block_id_hex_str,
+                        uint32_t expiration, /* expiration time in utc seconds */
+                        string chain_id_str,
+
+                        unsigned_int sell_asset_id,
+                        unsigned_int receive_asset_id,
+                        unsigned_int fee_paying_account_id, /* instance id of fee paying account */
+                        amount_type fee_amount, /* amount of fee */
+                        unsigned_int fee_asset_id /* instance id of asset to pay fee */
+)
+{
+    try {
+        fc::ecc::private_key active_priv_key = get_private_key("");
+
+        cancel_all_operation o;
+        _set_cancel_all_order_operation(o,
+                                    sell_asset_id, receive_asset_id, fee_paying_account_id, fee_amount, fee_asset_id);
+
+        signed_transaction signed_tx;
+        _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+        signed_tx.operations.push_back(o);
+
+        chain_id_type chain_id(chain_id_str);
+        signed_tx.sign(active_priv_key, chain_id);
+        variant tx(signed_tx);
+        return fc::json::to_string(tx);
+}catch(...){return "";}}
+
 string get_cancel_order_json(
                              unsigned_int order_id, /* instance id of order */
                              unsigned_int fee_paying_account_id, /* instance id of fee paying account */
@@ -378,7 +425,21 @@ string get_cancel_order_json(
   return fc::json::to_string(op_json);
 } catch(...){return "";}}
 
-
+string get_cancel_all_order_json(
+                                 unsigned_int sell_asset_id,
+                                 unsigned_int receive_asset_id,
+                                 unsigned_int fee_paying_account_id, /* instance id of fee paying account */
+                                 amount_type fee_amount, /* amount of fee */
+                                 unsigned_int fee_asset_id /* instance id of asset to pay fee */
+)
+{
+    try {
+        cancel_all_operation o;
+        _set_cancel_all_order_operation(o,
+                                    sell_asset_id, receive_asset_id, fee_paying_account_id, fee_amount, fee_asset_id);
+        variant op_json(o);
+        return fc::json::to_string(op_json);
+}catch(...){return "";}}
 
 string cybex_gateway_query(
                            string accountName,
