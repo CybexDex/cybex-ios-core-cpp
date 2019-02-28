@@ -19,11 +19,17 @@ class ViewController: UIViewController {
 //        testClaim()
 //
 //        testTransactionId()
-        testCancelAllOrders()
+        testTransactionWithMemoOperation()
+        getActiveKeys()
     }
 
     func login() {
         let keys = BitShareCoordinator.getUserKeys("cybex-test", password: "cybextest123456")
+        print(keys)
+    }
+
+    func getActiveKeys() {
+        let keys = BitShareCoordinator.getActiveUserKeys("CYB6G6u3jAYXL1Vt81vMh1r4CKaxkPgHwXdfrUDFfqDdPPSqJQLTH")
         print(keys)
     }
 
@@ -38,6 +44,11 @@ class ViewController: UIViewController {
         let sign = BitShareCoordinator.getClaimedSign(0, block_id: "", expiration: 600, chain_id: "", fee_asset_id: 0, fee_amount: 0, deposit_to_account_id: 0, claimed_id: 0, claimed_asset_id: 0, claimed_amount: 0, claimed_own: "CYBLanbfQMeMHCkowkpD7CDV2t36WfXfLnrh")
 
         print(sign)
+    }
+
+    func testTransactionWithMemoOperation() {
+        let operation = BitShareCoordinator.getTransterOperation(0, to_user_id: 0, asset_id: 0, amount: 0, fee_id: 0, fee_amount: 100, memo: "", from_memo_key: "", to_memo_key: "")
+        print(operation)
     }
 
     func testTransactionId() {

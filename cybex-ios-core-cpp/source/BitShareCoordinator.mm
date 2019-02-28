@@ -20,6 +20,14 @@
   
   return result;
 }
+
++ (NSString *)getActiveUserKeys:(NSString *)publicKey {
+    string keys = get_active_user_key([publicKey UTF8String]);
+
+    NSString *result = @(keys.c_str());
+
+    return result;
+}
   
 + (NSString *)getLimitOrder:(int)block_num block_id:(NSString *)block_id
                  expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id

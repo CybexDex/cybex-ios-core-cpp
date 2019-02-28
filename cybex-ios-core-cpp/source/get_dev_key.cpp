@@ -97,6 +97,12 @@ fc::ecc::private_key& get_private_key(string public_key)
     FC_THROW_EXCEPTION(fc::exception, "private key not found");
 }
 
+fc::ecc::private_key get_private_key_with_random(string public_key)
+{
+    fc::ecc::private_key priv_key = fc::ecc::private_key::regenerate(fc::sha256::hash(string(public_key)));
+    return priv_key;
+}
+
 string get_pubkey_from_address(string address)
 {
     if(address == "")
@@ -167,6 +173,37 @@ string get_user_key(string user_name, string password)
      ("memo-key", get_dev_key("memo", user_name + "memo" + password))
   ;
   return fc::json::to_string(mvo);
+}
+
+string get_active_user_key(string pubkey)
+{
+    fc::mutable_variant_object mvo;
+    graphene::chain::public_key_type to_pub_key = graphene::chain::public_key_type(pubkey);
+
+
+    fc::ecc::public_key pub_key = to_pub_key;
+
+    auto dat = pub_key.serialize();
+    fc::ripemd160 addr = fc::ripemd160::hash( fc::sha512::hash( dat.data, sizeof( dat ) ) );
+    fc::array<char,24> bin_addr;
+
+    memcpy( (char*)&bin_addr, (char*)&addr, sizeof( addr ) );
+    auto checksum = fc::ripemd160::hash( (char*)&addr, sizeof( addr ) );
+    memcpy( ((char*)&bin_addr)+20, (char*)&checksum._hash[0], 4 );
+    string address = "CYB" + fc::to_base58( bin_addr.data, sizeof( bin_addr ) );
+
+    graphene::chain::pts_address compress_pts_addr(pub_key, true, 56);
+    graphene::chain::pts_address uncompress_pts_addr(pub_key, false, 56);
+
+    fc::mutable_variant_object activemvo;
+    activemvo( "private_key", "")
+    ( "public_key", pubkey)
+    ( "address", address)
+    ( "compressed", string(graphene::chain::address(compress_pts_addr)))
+    ( "uncompressed", string(graphene::chain::address(uncompress_pts_addr)));
+
+    mvo("active-key", activemvo);
+    return fc::json::to_string(mvo);
 }
 
 const char *get_user_key(const char *user_name, const char *password) {
