@@ -70,11 +70,17 @@
     return @(jsonString.c_str());
 }
 
++ (void)setDerivedOperationExtensions:(NSString *)master_public_key derived_private_key:(NSString *)derived_private_key derived_public_key:(NSString *)derived_public_key nonce:(int)nonce signature:(NSString *)signature {
+    set_derived_operation_extensions([master_public_key UTF8String], [derived_private_key UTF8String], [derived_public_key UTF8String], nonce, [signature UTF8String]);
+}
+
 + (NSString *)getTransaction:(int)block_num block_id:(NSString *)block_id
                   expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
                 from_user_id:(int)from_user_id to_user_id:(int)to_user_id
                     asset_id:(int)asset_id receive_asset_id:(int)receive_asset_id
-                      amount:(int64_t)amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount memo:(NSString *)memo from_memo_key:(NSString *)from_memo_key to_memo_key:(NSString *)to_memo_key {
+                      amount:(int64_t)amount fee_id:(int)fee_id
+                  fee_amount:(int64_t)fee_amount memo:(NSString *)memo
+               from_memo_key:(NSString *)from_memo_key to_memo_key:(NSString *)to_memo_key {
   string jsonString = transfer(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], from_user_id, to_user_id, amount, asset_id, fee_amount, fee_id, [memo UTF8String], [from_memo_key UTF8String], [to_memo_key UTF8String]);
   
   return @(jsonString.c_str());
@@ -163,6 +169,10 @@
                claimed_own:(NSString *)claimed_own {
     string jsonString = get_claim_balance_operation(fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, [claimed_own UTF8String], claimed_asset_id, claimed_amount);
     return @(jsonString.c_str());
+}
+
++ (NSString *)generatePrivateKey:(NSString *)message {
+    return @(get_private_key_with_message([message UTF8String]).c_str());
 }
 
 @end

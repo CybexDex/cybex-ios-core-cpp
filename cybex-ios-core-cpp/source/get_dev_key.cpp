@@ -22,7 +22,7 @@ using namespace boost::property_tree;
 #include <fc/exception/exception.hpp>
 #include <graphene/chain/pts_address.hpp>
 #include <graphene/chain/protocol/address.hpp>
-
+#include <fc/variant.hpp>
 #include "wallet_lib.hpp"
 #include "walletExtern.h"
 
@@ -50,6 +50,42 @@ std::string key_to_wif(const fc::sha256& secret )
   return fc::to_base58(data, sizeof(data));
 }
 
+std::string key_to_wif(const fc::ecc::private_key& key)
+{
+    return key_to_wif( key.get_secret() );
+}
+
+fc::optional<fc::ecc::private_key> wif_to_key( const std::string& wif_key )
+{
+    std::vector<char> wif_bytes;
+    try
+    {
+        wif_bytes = fc::from_base58(wif_key);
+    }
+    catch (const fc::parse_error_exception&)
+    {
+        return fc::optional<fc::ecc::private_key>();
+    }
+    if (wif_bytes.size() < 5) {
+        return fc::optional<fc::ecc::private_key>();
+    }
+    std::vector<char> key_bytes(wif_bytes.begin() + 1, wif_bytes.end() - 4);
+
+    fc::variant var = fc::variant( key_bytes);
+    fc::ecc::private_key key;
+    from_variant(var, key);
+
+    fc::sha256 check = fc::sha256::hash(wif_bytes.data(), wif_bytes.size() - 4);
+    fc::sha256 check2 = fc::sha256::hash(check);
+//
+    if( memcmp( (char*)&check, wif_bytes.data() + wif_bytes.size() - 4, 4 ) == 0 ||
+       memcmp( (char*)&check2, wif_bytes.data() + wif_bytes.size() - 4, 4 ) == 0 ) {
+        return key;
+    }
+
+    return fc::optional<fc::ecc::private_key>();
+}
+
 /*
  * global parameters to hold the keys
  */
@@ -60,11 +96,17 @@ static map<string, fc::ecc::private_key> stored_keys;
 static map<string, vector<string>> stored_addresses;
 
 static string default_public_key = "";
+static string default_private_key = "";
 
 
 void set_default_public_key(string pub_key_base58_str)
 {
   default_public_key = pub_key_base58_str;
+}
+
+void set_default_private_key(string pri_key_base58_str)
+{
+    default_private_key = pri_key_base58_str;
 }
 
 void clear_user_key()
@@ -83,8 +125,13 @@ void add_address(string public_key, vector<string> addresses)
     stored_addresses.insert(map<string, vector<string>>::value_type(public_key, addresses));
 }
 
-fc::ecc::private_key& get_private_key(string public_key)
+fc::ecc::private_key get_private_key(string public_key)
 {
+    if(default_private_key.size())
+    {
+        fc::ecc::private_key pk = *wif_to_key(default_private_key);
+        return pk;
+    }
     map<string, fc::ecc::private_key>::iterator iter;
 
     if(public_key == "")
@@ -95,6 +142,12 @@ fc::ecc::private_key& get_private_key(string public_key)
         return iter->second;
 
     FC_THROW_EXCEPTION(fc::exception, "private key not found");
+}
+
+string get_private_key_with_message(string message)
+{
+    fc::ecc::private_key priv_key = fc::ecc::private_key::regenerate(fc::sha256::hash(string(message)));
+    return key_to_wif(priv_key);
 }
 
 fc::ecc::private_key get_private_key_with_random(string public_key)
@@ -202,7 +255,8 @@ string get_active_user_key(string pubkey)
     ( "compressed", string(graphene::chain::address(compress_pts_addr)))
     ( "uncompressed", string(graphene::chain::address(uncompress_pts_addr)));
 
-    mvo("active-key", activemvo);
+    mvo("active-key", activemvo)
+    ("owner-key", activemvo);
     return fc::json::to_string(mvo);
 }
 

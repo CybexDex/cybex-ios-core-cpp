@@ -14,6 +14,36 @@ using namespace std;
 using namespace fc;
 using namespace graphene::chain;
 
+static trx_ext_derived_signature ext_derived_signature;
+
+
+int char2int(char input)
+{
+    if(input >= '0' && input <= '9')
+        return input - '0';
+    if(input >= 'A' && input <= 'F')
+        return input - 'A' + 10;
+    if(input >= 'a' && input <= 'f')
+        return input - 'a' + 10;
+    throw std::invalid_argument("Invalid input string");
+}
+
+// This function assumes src to be a zero terminated sanitized string with
+// an even number of [0-9a-f] characters, and target to be sufficiently large
+static void hex2bin( const char* src, unsigned char* target)
+{
+    while(*src && src[1])
+    {
+        *(target++) = char2int(*src)*16 + char2int(src[1]);
+        src += 2;
+    }
+}
+
+void clear_ext_derived_signature()
+{
+    ext_derived_signature.key.nonce = 0;
+}
+
 static void _init_transaction(
                               signed_transaction& tx,
                               uint16_t ref_block_num,
@@ -21,10 +51,14 @@ static void _init_transaction(
                               uint32_t tx_expiration
                               )
 {
+    if (ext_derived_signature.key.nonce != 0) {
+        tx.extensions.insert(ext_derived_signature);
+    }
   block_id_type ref_block_id(ref_block_id_hex_str);
   tx.ref_block_num = ref_block_num;
   tx.ref_block_prefix = ref_block_id._hash[1];
   tx.expiration = fc::time_point_sec(tx_expiration);
+    clear_ext_derived_signature();
 }
 
 static void _set_balance_claim_operation(
@@ -102,6 +136,26 @@ static void _set_transfer_operation(
     }
 }
 
+void set_derived_operation_extensions(
+                                      string master_public_key,
+                                      string derived_private_key,
+                                      string derived_public_key,
+                                      uint32_t nonce,
+                                      string signature
+                                    )
+{
+    if (master_public_key.size()) {
+        trx_ext_derived_signature ext;
+        ext.secret_public_key = public_key_type(master_public_key);
+        ext.key.temp_key = public_key_type(derived_public_key);
+        ext.key.nonce = nonce;
+        hex2bin(signature.c_str(), ext.signature.begin());
+
+        ext_derived_signature = ext;
+        set_default_private_key(derived_private_key);
+    }
+}
+
 string transfer(
                 uint16_t ref_block_num,
                 string ref_block_id_hex_str,
@@ -123,7 +177,7 @@ string transfer(
   transfer_operation o;
   
   _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
-  
+
   signed_transaction signed_tx;
   _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
   
@@ -131,7 +185,7 @@ string transfer(
   
   chain_id_type chain_id(chain_id_str);
   signed_tx.sign(active_priv_key, chain_id);
-
+    set_default_private_key("");
 
   variant tx(signed_tx);
   return fc::json::to_string(tx);
@@ -171,7 +225,7 @@ string transfer_with_vesting(
 
         chain_id_type chain_id(chain_id_str);
         signed_tx.sign(active_priv_key, chain_id);
-
+        set_default_private_key("");
 
         variant tx(signed_tx);
         return fc::json::to_string(tx);
@@ -207,6 +261,7 @@ string transaction_id(
 
     chain_id_type chain_id(chain_id_str);
     signed_tx.sign(active_priv_key, chain_id);
+    set_default_private_key("");
 
     return signed_tx.id().str();
 } catch(...) {return "";}}
@@ -305,6 +360,8 @@ string limit_order_create(
   
   chain_id_type chain_id(chain_id_str);
   signed_tx.sign(active_priv_key, chain_id);
+    set_default_private_key("");
+
   variant tx(signed_tx);
   return fc::json::to_string(tx);
 } catch(...) {return "";}}
@@ -383,6 +440,8 @@ string cancel_order(
   
   chain_id_type chain_id(chain_id_str);
   signed_tx.sign(active_priv_key, chain_id);
+    set_default_private_key("");
+
   variant tx(signed_tx);
   return fc::json::to_string(tx);
 } catch(...){return "";}}
@@ -414,6 +473,8 @@ string cancel_all_order(
 
         chain_id_type chain_id(chain_id_str);
         signed_tx.sign(active_priv_key, chain_id);
+        set_default_private_key("");
+
         variant tx(signed_tx);
         return fc::json::to_string(tx);
 }catch(...){return "";}}
@@ -470,6 +531,8 @@ string cybex_gateway_query(
   fc::ecc::private_key active_priv_key = get_private_key("");
   fc::raw::pack(enc, trx.op);
   trx.signer = active_priv_key.sign_compact(enc.result());
+    set_default_private_key("");
+
   return fc::json::to_string(trx);
 } catch(...){return "";}}
 
@@ -518,6 +581,8 @@ string sign_claim_balance(
 
     chain_id_type chain_id(chain_id_str);
     signed_tx.sign(active_priv_key, chain_id);
+    set_default_private_key("");
+
     variant tx(signed_tx);
     return fc::json::to_string(tx);
 } catch(...) {return "";}}
@@ -530,6 +595,8 @@ string sign_message(string message) {
 //        fc::raw::pack(enc, message);
         enc.write(message.c_str(), message.length());
         signature_type result = active_priv_key.sign_compact(enc.result());
+        set_default_private_key("");
+
         return fc::json::to_string(result);
     } catch(...){return "";}
 }

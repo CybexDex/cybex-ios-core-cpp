@@ -106,7 +106,8 @@ namespace graphene { namespace chain {
     *  compatibility.   
     */
    typedef static_variant<void_t,cybex_ext_vesting,cybex_ext_swap,cybex_ext_transfer_vesting,
-                                 cybex_ext_xfer_to_name,cybex_ext_xfer_to_many>      future_extensions;
+                                 cybex_ext_xfer_to_name,cybex_ext_xfer_to_many,
+                                 trx_ext_derived_signature>      future_extensions;
 
    /**
     *  A flat_set is used to make sure that only one extension of

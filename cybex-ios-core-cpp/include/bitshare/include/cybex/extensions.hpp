@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <graphene/chain/protocol/types.hpp>
+
 namespace graphene { namespace chain {
 
 struct cybex_ext_vesting {
@@ -31,8 +33,21 @@ struct cybex_ext_xfer_to_many {
   vector<struct cybex_xfer_item>  list;
 };
 
-struct cxl_trx_id {
-    transaction_id_type  trx_id;
+/*
+ * extension for transaction
+ */
+struct derived_public_key {
+  public_key_type temp_key;
+  uint32_t        nonce;
+  digest_type     digest() const;
+};
+
+struct trx_ext_derived_signature {
+  derived_public_key key;
+  public_key_type   secret_public_key;
+  signature_type    signature; /* signature is used to validate */
+  const signature_type& sign(const private_key_type& pk);
+  void verify() const;
 };
 
 void cybex_ext_vesting_check(const account_object & to_account, const cybex_ext_vesting & ext1);
@@ -45,4 +60,5 @@ FC_REFLECT( graphene::chain::cybex_ext_swap,(msg) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_name,(name)(asset_sym)(fee_asset_sym)(hw_cookie1)(hw_cookie2) )
 FC_REFLECT( graphene::chain::cybex_xfer_item,(name)(amount) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_many,(list) )
-FC_REFLECT( graphene::chain::cxl_trx_id,(trx_id) )
+FC_REFLECT( graphene::chain::derived_public_key, (temp_key)(nonce) )
+FC_REFLECT( graphene::chain::trx_ext_derived_signature, (key)(secret_public_key)(signature) )

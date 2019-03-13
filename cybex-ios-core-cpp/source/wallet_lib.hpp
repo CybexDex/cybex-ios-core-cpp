@@ -13,12 +13,21 @@ using namespace fc;
 typedef int64_t amount_type;
 string get_user_key(string user_name, string password);
 string get_active_user_key(string pubkey);
-ecc::private_key& get_private_key(string public_key);
+ecc::private_key get_private_key(string public_key);
 ecc::private_key get_private_key_with_random(string public_key);
+string get_private_key_with_message(string message);
 void clear_user_key();
 void set_default_public_key(string pub_key_base58_str);
+void set_default_private_key(string pri_key_base58_str);
 string get_pubkey_from_address(string address);
 
+void set_derived_operation_extensions(
+                                 string master_public_key,
+                                 string derived_private_key,
+                                 string derived_public_key,
+                                 uint32_t nonce,
+                                 string signature
+);
 string transaction_id(
                      uint16_t ref_block_num,
                      string ref_block_id_hex_str,
