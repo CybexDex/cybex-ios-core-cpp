@@ -37,8 +37,8 @@ struct cybex_ext_xfer_to_many {
  * extension for transaction
  */
 struct derived_public_key {
+    uint32_t        nonce;
   public_key_type temp_key;
-  uint32_t        nonce;
   digest_type     digest() const;
 };
 
@@ -60,5 +60,5 @@ FC_REFLECT( graphene::chain::cybex_ext_swap,(msg) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_name,(name)(asset_sym)(fee_asset_sym)(hw_cookie1)(hw_cookie2) )
 FC_REFLECT( graphene::chain::cybex_xfer_item,(name)(amount) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_many,(list) )
-FC_REFLECT( graphene::chain::derived_public_key, (temp_key)(nonce) )
+FC_REFLECT( graphene::chain::derived_public_key, (nonce)(temp_key) )
 FC_REFLECT( graphene::chain::trx_ext_derived_signature, (key)(secret_public_key)(signature) )
