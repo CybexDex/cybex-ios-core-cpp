@@ -44,7 +44,6 @@ struct derived_public_key {
 
 struct trx_ext_derived_signature {
   derived_public_key key;
-  public_key_type   secret_public_key;
   signature_type    signature; /* signature is used to validate */
   const signature_type& sign(const private_key_type& pk);
   void verify() const;
@@ -61,4 +60,4 @@ FC_REFLECT( graphene::chain::cybex_ext_xfer_to_name,(name)(asset_sym)(fee_asset_
 FC_REFLECT( graphene::chain::cybex_xfer_item,(name)(amount) )
 FC_REFLECT( graphene::chain::cybex_ext_xfer_to_many,(list) )
 FC_REFLECT( graphene::chain::derived_public_key, (nonce)(temp_key) )
-FC_REFLECT( graphene::chain::trx_ext_derived_signature, (key)(secret_public_key)(signature) )
+FC_REFLECT( graphene::chain::trx_ext_derived_signature, (key)(signature) )

@@ -28,6 +28,14 @@
 
     return result;
 }
+
++ (NSString *)updateAccount:(int)block_num block_id:(NSString *)block_id
+                 expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+                  operation:(NSString *)operation {
+    string jsonString = get_account_update_json(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], [operation UTF8String]);
+
+    return @(jsonString.c_str());
+}
   
 + (NSString *)getLimitOrder:(int)block_num block_id:(NSString *)block_id
                  expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id

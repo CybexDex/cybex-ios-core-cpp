@@ -28,6 +28,13 @@ void set_derived_operation_extensions(
                                  uint32_t nonce,
                                  string signature
 );
+string get_account_update_json(
+                               uint16_t ref_block_num,
+                               string ref_block_id_hex_str,
+                               uint32_t expiration,
+                               string chain_id_str,
+                               string account_update_op_json
+                               );
 string transaction_id(
                      uint16_t ref_block_num,
                      string ref_block_id_hex_str,

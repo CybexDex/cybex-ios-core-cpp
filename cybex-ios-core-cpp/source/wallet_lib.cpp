@@ -146,7 +146,6 @@ void set_derived_operation_extensions(
 {
     if (master_public_key.size()) {
         trx_ext_derived_signature ext;
-        ext.secret_public_key = public_key_type(master_public_key);
         ext.key.temp_key = public_key_type(derived_public_key);
         ext.key.nonce = nonce;
         hex2bin(signature.c_str(), ext.signature.begin());
@@ -155,6 +154,31 @@ void set_derived_operation_extensions(
         set_default_private_key(derived_private_key);
     }
 }
+
+string get_account_update_json(
+                               uint16_t ref_block_num,
+                               string ref_block_id_hex_str,
+                               uint32_t expiration,
+                               string chain_id_str,
+
+                               string account_update_op_json
+                               )
+{ try {
+    fc::ecc::private_key active_priv_key = get_private_key("");
+    account_update_operation o = fc::json::from_string(account_update_op_json).as<graphene::chain::account_update_operation>();
+
+    signed_transaction signed_tx;
+    _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+    signed_tx.operations.push_back(o);
+
+    chain_id_type chain_id(chain_id_str);
+    signed_tx.sign(active_priv_key, chain_id);
+    set_default_private_key("");
+
+    variant tx(signed_tx);
+    return fc::json::to_string(tx);
+} catch(...){return "";}}
 
 string transfer(
                 uint16_t ref_block_num,

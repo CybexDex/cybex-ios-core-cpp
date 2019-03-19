@@ -22,7 +22,7 @@ class ViewController: UIViewController {
 //        testTransactionWithMemoOperation()
         getActiveKeys()
         testDerivedOperation()
-        testSignMessage()
+        testUpdateAccount()
     }
 
     func testDerivedOperation() {
@@ -42,6 +42,14 @@ class ViewController: UIViewController {
     func getActiveKeys() {
         let keys = BitShareCoordinator.getActiveUserKeys("CYB6G6u3jAYXL1Vt81vMh1r4CKaxkPgHwXdfrUDFfqDdPPSqJQLTH")
         print(keys)
+    }
+
+    func testUpdateAccount() {
+        let operation = """
+        {"fee": { "amount": 105, "asset_id": "1.3.0" },"account": "1.2.28828","active": { "weight_threshold": 1, "account_auths": [], "key_auths": [ [ "CYB6PGuvsw3u1Z2AgfyadLkAMYXWiUbtRSeA6q4z5ZJ8TqRnhHEAb", 1 ], [ "CYB7ef4mgvLCMU1VERyE6CzZcm8q2WfjrXk5z3nDVL83mUDbSbZmg", 1 ] ], "address_auths": [] },"new_options": { "memo_key": "CYB6PGuvsw3u1Z2AgfyadLkAMYXWiUbtRSeA6q4z5ZJ8TqRnhHEAb", "voting_account": "1.2.5", "num_witness": 0, "num_committee": 0, "votes": [], "extensions": [] },"extensions": {} }
+        """
+        let json = BitShareCoordinator.updateAccount(0, block_id: "", expiration: 600, chain_id: "", operation: operation)
+        print(json)
     }
 
     func testSignMessage() {
