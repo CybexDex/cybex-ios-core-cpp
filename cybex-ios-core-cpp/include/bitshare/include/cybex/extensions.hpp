@@ -45,6 +45,7 @@ struct derived_public_key {
 struct trx_ext_derived_signature {
   derived_public_key key;
   signature_type    signature; /* signature is used to validate */
+    string pubkey;
   const signature_type& sign(const private_key_type& pk);
   void verify() const;
 };

@@ -148,6 +148,7 @@ void set_derived_operation_extensions(
         trx_ext_derived_signature ext;
         ext.key.temp_key = public_key_type(derived_public_key);
         ext.key.nonce = nonce;
+        ext.pubkey = master_public_key;
         hex2bin(signature.c_str(), ext.signature.begin());
 
         ext_derived_signature = ext;
@@ -593,8 +594,12 @@ string sign_claim_balance(
     fc::ecc::private_key active_priv_key = get_private_key("");
 
     balance_claim_operation o;
-
-    string pubkey = get_pubkey_from_address(claimed_own);
+    string pubkey;
+    if (ext_derived_signature.key.nonce != 0) {
+        pubkey = ext_derived_signature.pubkey;
+    } else {
+        pubkey = get_pubkey_from_address(claimed_own);
+    }
 
     _set_balance_claim_operation(o, fee_asset_id, fee_amount, deposit_to_account_id, claimed_id, pubkey, claimed_asset_id, claimed_amount);
 
