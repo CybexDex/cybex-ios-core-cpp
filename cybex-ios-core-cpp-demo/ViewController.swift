@@ -27,7 +27,7 @@ class ViewController: UIViewController {
 
     func testDerivedOperation() {
         let pri = BitShareCoordinator.generatePrivateKey("xxx")
-
+        
         BitShareCoordinator.setDerivedOperationExtensions("CYB7LBj58E9EPuSpgyF46PeCVUvZXBT8WEmGSuRc6nNNKWH9Rg5UZ", derived_private_key: pri, derived_public_key: "CYB5GbPs1FoZMUA3SJe44kUz7XQzMGAMdbjfNkV2ts7EjXyAnrc3j", nonce: 32, signature: "202f2bb55b1fe76709e51588c6e64155a09e13241b481cc72ce9d557287641cbf17c399f7b44c3ef240b6b3201b718686ef688ee09a0529e24e04c44dd54b4b1ef")
 //        BitShareCoordinator.setDerivedOperationExtensions("CYB7LBj58E9EPuSpgyF46PeCVUvZXBT8WEmGSuRc6nNNKWH9Rg5UZ", derived_private_key: "", derived_public_key: "CYB5GbPs1FoZMUA3SJe44kUz7XQzMGAMdbjfNkV2ts7EjXyAnrc3j", nonce: 100, signature: "202f2bb55b1fe76709e51588c6e64155a09e13241b481cc72ce9d557287641cbf17c399f7b44c3ef240b6b3201b718686ef688ee09a0529e24e04c44dd54b4b1ef")
 //        let transaction = BitShareCoordinator.getTransaction(0, block_id: "0", expiration: 600, chain_id: "0", from_user_id: 0, to_user_id: 0, asset_id: 0, receive_asset_id: 0, amount: 0, fee_id: 0, fee_amount: 0, memo: "", from_memo_key: "", to_memo_key: "")

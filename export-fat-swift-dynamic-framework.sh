@@ -11,8 +11,8 @@ set -ex
 ######################
 # Param setup
 ######################
-TARGET_NAME=cybex-ios-core-cpp
-SCHEME=cybex-ios-core-cpp
+TARGET_NAME=cybex_ios_core_cpp
+SCHEME=cybex_ios_core_cpp
 CONFIGURATION=Release
 PROJECT_NAME=cybex-ios-core-cpp
 SRCROOT=.
@@ -59,6 +59,7 @@ if [ "${CONFIGURATION}" = "Release" ]; then
 		DEVICE_PATH="${ARCHIVE_PATH}/Release"
 		mkdir "${DEVICE_PATH}"
 		cp -r "${DEVICE_BIN}" "${DEVICE_PATH}"
+		
 		echo "Copy device framework done"
 	else
 		echo "Device framework doesn't exist in given path"
@@ -79,6 +80,10 @@ if [ "${CONFIGURATION}" = "Release" ]; then
 	UNIVERSAL_PATH="${ARCHIVE_PATH}/Universal"
 	mkdir "${UNIVERSAL_PATH}"
 	cp -r "${SIMULATOR_BIN}" "${UNIVERSAL_PATH}"
+	if [ -d "${DEVICE_BIN}${TARGET_NAME}.framework/Modules/${TARGET_NAME}.swiftmodule/" ]; then
+		cp -f ${DEVICE_BIN}${TARGET_NAME}.framework/Modules/${TARGET_NAME}.swiftmodule/* "${UNIVERSAL_PATH}/${TARGET_NAME}.framework/Modules/${TARGET_NAME}.swiftmodule/" | echo
+	fi
+
 	lipo -create "${DEVICE_BIN}${TARGET_NAME}.framework/${TARGET_NAME}" "${SIMULATOR_BIN}${TARGET_NAME}.framework/${TARGET_NAME}" -output  "${UNIVERSAL_PATH}/${TARGET_NAME}.framework/${TARGET_NAME}"
 	zip -r "${UNIVERSAL_PATH}/${TARGET_NAME}.zip" "${UNIVERSAL_PATH}/${TARGET_NAME}.framework" 
 	echo "Universal framework created successfully"
