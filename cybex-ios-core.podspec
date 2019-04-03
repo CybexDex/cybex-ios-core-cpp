@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "cybex-ios-core"
-  spec.version      = "2.0.1"
+  spec.version      = "2.0.2"
   spec.summary      = "cybex crypto with cpp"
 
   spec.description  = <<-DESC
