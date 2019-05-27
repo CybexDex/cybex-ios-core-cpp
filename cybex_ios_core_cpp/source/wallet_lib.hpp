@@ -221,3 +221,25 @@ string sign_message(string message);
 string decrypt_memo_data(
                          string memo_json_str
                          );
+
+string exchange_participate(
+                          uint16_t ref_block_num,
+                          string ref_block_id_hex_str,
+                          uint32_t expiration, /* expiration time in utc seconds */
+                          string chain_id_str,
+
+                          unsigned_int payer_id, /* instance id of seller account */
+                          unsigned_int asset_id, /* instance id fo asset to be sold */
+                          amount_type amount, /* amount to be sold */
+                          unsigned_int exchange_id, /* instance id of asset to receive */
+                          amount_type fee_amount, /* amount of fee */
+                          unsigned_int fee_asset_id /* instance id of asset to pay fee*/
+);
+string exchange_participate_json(
+                                 unsigned_int payer_id,
+                                 unsigned_int asset_id,
+                                 amount_type amount,
+                                 unsigned_int exchange_id,
+                                 amount_type fee_amount,
+                                 unsigned_int fee_asset_id
+                                 );

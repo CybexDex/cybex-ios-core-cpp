@@ -9,7 +9,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "cybex-ios-core"
-  spec.version      = "2.0.2"
+  spec.version      = "2.0.3"
   spec.summary      = "cybex crypto with cpp"
 
   spec.description  = <<-DESC
@@ -56,7 +56,7 @@ Pod::Spec.new do |spec|
   #spec.exclude_files = "Classes/Exclude"
 
   spec.public_header_files = "#{spec.module_name}/source/BitShareCoordinator.h"
-  #spec.private_header_files = "#{spec.module_name}/include/**/*.hpp"
+  spec.private_header_files = "#{spec.module_name}/include/**/*", "#{spec.module_name}/include/openssl/include/**/*"
   #spec.header_mappings_dir = "#{spec.module_name}/include/**"
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -87,7 +87,7 @@ Pod::Spec.new do |spec|
   dir = File.dirname(__FILE__) + "/#{spec.module_name}"
   spec.xcconfig = { "HEADER_SEARCH_PATHS" => ["#{dir}/include/bitshare/include", "#{dir}/include/libfc/include", "#{dir}/include/openssl/include", "#{dir}/include/boost/include"],
   'ENABLE_BITCODE' => 'NO',
-  'VALID_ARCHS' => 'arm64'
+  'VALID_ARCHS' => 'x86_64 arm64'
    }
 
 end

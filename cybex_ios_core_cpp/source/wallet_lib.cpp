@@ -5,6 +5,8 @@
 #include "graphene/chain/protocol/types.hpp"
 #include "graphene/chain/protocol/transfer.hpp"
 #include "graphene/chain/protocol/memo.hpp"
+#include "cybex/exchange_ops.hpp"
+
 #include "transaction.hpp"
 #include "wallet_lib.hpp"
 #include "cybex_gateway_query.hpp"
@@ -649,4 +651,76 @@ string decrypt_memo_data(
 
 void wallet_test() {
     printf("s");
+}
+
+void _set_exchange_participate_operation(
+                                       exchange_participate_operation &o,
+                                         unsigned_int payer_id,
+                                         unsigned_int asset_id,
+                                         amount_type amount,
+                                         unsigned_int exchange_id,
+                                         amount_type fee_amount,
+                                         unsigned_int fee_asset_id
+)
+{
+    o.payer.instance = payer_id;
+    o.amount.asset_id = asset_id;
+    o.amount.amount = amount;
+    o.exchange_to_pay = exchange_id;
+    o.fee.amount = fee_amount;
+    o.fee.asset_id = fee_asset_id;
+}
+
+string exchange_participate(
+                            uint16_t ref_block_num,
+                            string ref_block_id_hex_str,
+                            uint32_t expiration, /* expiration time in utc seconds */
+                            string chain_id_str,
+
+                            unsigned_int payer_id,
+                            unsigned_int asset_id,
+                            amount_type amount,
+                            unsigned_int exchange_id,
+                            amount_type fee_amount,
+                            unsigned_int fee_asset_id
+)
+{
+    try{
+        fc::ecc::private_key active_priv_key = get_private_key("");
+
+        exchange_participate_operation o;
+
+        _set_exchange_participate_operation(o, payer_id, asset_id, amount, exchange_id, fee_amount, fee_asset_id);
+
+        signed_transaction signed_tx;
+        _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+        signed_tx.operations.push_back(o);
+
+        chain_id_type chain_id(chain_id_str);
+        signed_tx.sign(active_priv_key, chain_id);
+        set_default_private_key("");
+
+        variant tx(signed_tx);
+        return fc::json::to_string(tx);
+    } catch(...) {return "";}
+}
+
+string exchange_participate_json(
+                            unsigned_int payer_id,
+                            unsigned_int asset_id,
+                            amount_type amount,
+                            unsigned_int exchange_id,
+                            amount_type fee_amount,
+                            unsigned_int fee_asset_id
+                            )
+{
+    try{
+        exchange_participate_operation o;
+
+        _set_exchange_participate_operation(o, payer_id, asset_id, amount, exchange_id, fee_amount, fee_asset_id);
+
+        variant op_json(o);
+        return fc::json::to_string(op_json);
+    } catch(...) {return "";}
 }

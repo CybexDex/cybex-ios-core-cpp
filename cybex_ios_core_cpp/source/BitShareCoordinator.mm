@@ -127,6 +127,24 @@
     return @(jsonString.c_str());
 }
 
++ (NSString *)exchangeParticipateJSON:(int)user_id exchange_id:(int)exchange_id
+                             asset_id:(int)asset_id amount:(int64_t)amount
+                               fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
+    string jsonString = exchange_participate_json(user_id, asset_id, amount, exchange_id, fee_amount, fee_id);
+    return @(jsonString.c_str());
+
+}
+
++ (NSString *)exchangeParticipate:(int)block_num block_id:(NSString *)block_id
+                       expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+                          user_id:(int)user_id exchange_id:(int)exchange_id
+                         asset_id:(int)asset_id amount:(int64_t)amount
+                           fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
+    string jsonString = exchange_participate(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], user_id, asset_id, amount, exchange_id, fee_amount, fee_id);
+    return @(jsonString.c_str());
+}
+
+
 + (void)resetDefaultPublicKey:(NSString *)str {
   set_default_public_key([str UTF8String]);
 }

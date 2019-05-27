@@ -145,6 +145,7 @@ namespace graphene { namespace chain {
       crowdfund_contract_object_type,
       dice_bet_object_type,
       dice_bet_contract_object_type,
+       exchange_object_type,
       OBJECT_TYPE_COUNT ///< Sentry value which contains the number of different object types
    };
 
@@ -168,7 +169,9 @@ namespace graphene { namespace chain {
       impl_buyback_object_type,
       impl_fba_accumulator_object_type,
       impl_collateral_bid_object_type,
-      impl_transaction_order_object_type
+      impl_transaction_order_object_type,
+       impl_exchange_dynamic_data_type,
+       impl_exchange_participate_object_type
    };
 
    class account_object;
@@ -190,6 +193,7 @@ namespace graphene { namespace chain {
    class crowdfund_contract_object;
    class dice_bet_object;
    class dice_bet_contract_object;
+    class exchange_object;
 
    typedef object_id< protocol_ids, account_object_type,            account_object>               account_id_type;
    typedef object_id< protocol_ids, asset_object_type,              asset_object>                 asset_id_type;
@@ -209,6 +213,7 @@ namespace graphene { namespace chain {
    typedef object_id< protocol_ids, crowdfund_contract_object_type, crowdfund_contract_object>    crowdfund_contract_id_type;
    typedef object_id< protocol_ids, dice_bet_object_type,           dice_bet_object>              dice_bet_id_type;
    typedef object_id< protocol_ids, dice_bet_contract_object_type,  dice_bet_contract_object>     dice_bet_contract_id_type;
+    typedef object_id< protocol_ids, exchange_object_type,           exchange_object>              exchange_id_type;
 
 
    // implementation types
@@ -229,6 +234,8 @@ namespace graphene { namespace chain {
    class fba_accumulator_object;
    class collateral_bid_object;
    class transaction_order_object;
+    class exchange_dynamic_data_object;
+    class exchange_participate_object;
 
    typedef object_id< implementation_ids, impl_global_property_object_type,  global_property_object>                    global_property_id_type;
    typedef object_id< implementation_ids, impl_dynamic_global_property_object_type,  dynamic_global_property_object>    dynamic_global_property_id_type;
@@ -251,6 +258,8 @@ namespace graphene { namespace chain {
    typedef object_id< implementation_ids, impl_fba_accumulator_object_type, fba_accumulator_object >                    fba_accumulator_id_type;
    typedef object_id< implementation_ids, impl_collateral_bid_object_type, collateral_bid_object >                      collateral_bid_id_type;
    typedef object_id< implementation_ids, impl_transaction_order_object_type, transaction_order_object >                transaction_order_id_type;
+    typedef object_id< implementation_ids, impl_exchange_dynamic_data_type, exchange_dynamic_data_object >               exchange_dynamic_data_id_type;
+    typedef object_id< implementation_ids, impl_exchange_participate_object_type, exchange_participate_object>           exchange_participate_id_type;
 
    typedef fc::array<char, GRAPHENE_MAX_ASSET_SYMBOL_LENGTH>    symbol_type;
    typedef fc::ripemd160                                        block_id_type;
@@ -365,6 +374,7 @@ FC_REFLECT_ENUM( graphene::chain::object_type,
                  (crowdfund_contract_object_type)
                  (dice_bet_object_type)
                  (dice_bet_contract_object_type)
+                (exchange_object_type)
                  (OBJECT_TYPE_COUNT)
                )
 FC_REFLECT_ENUM( graphene::chain::impl_object_type,
@@ -387,6 +397,8 @@ FC_REFLECT_ENUM( graphene::chain::impl_object_type,
                  (impl_fba_accumulator_object_type)
                  (impl_collateral_bid_object_type)
                  (impl_transaction_order_object_type)
+                (impl_exchange_dynamic_data_type)
+                (impl_exchange_participate_object_type)
                )
 
 FC_REFLECT_TYPENAME( graphene::chain::share_type )
@@ -424,6 +436,7 @@ FC_REFLECT_TYPENAME( graphene::chain::crowdfund_contract_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::transaction_order_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::dice_bet_id_type )
 FC_REFLECT_TYPENAME( graphene::chain::dice_bet_contract_id_type )
+FC_REFLECT_TYPENAME( graphene::chain::exchange_id_type )
 
 FC_REFLECT( graphene::chain::void_t, )
 

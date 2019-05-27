@@ -21,8 +21,14 @@ class ViewController: UIViewController {
 //        testTransactionId()
 //        testTransactionWithMemoOperation()
         getActiveKeys()
-        testDerivedOperation()
-        testUpdateAccount()
+//        testDerivedOperation()
+//        testUpdateAccount()
+        testParticipateExchange()
+    }
+
+    func testParticipateExchange() {
+        let jsonStr = BitShareCoordinator.exchangeParticipate(0, block_id: "0", expiration: 600, chain_id: "0", user_id: 0, exchange_id: 0, asset_id: 2, amount: 20, fee_id: 0, fee_amount: 40)
+        print(jsonStr)
     }
 
     func testDerivedOperation() {
