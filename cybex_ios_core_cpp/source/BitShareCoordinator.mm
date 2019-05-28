@@ -41,14 +41,14 @@
                  expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
                     user_id:(int)user_id order_expiration:(NSTimeInterval)order_expiration
                    asset_id:(int)asset_id amount:(int64_t)amount receive_asset_id:(int)receive_asset_id
-             receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
-  string jsonString = limit_order_create(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], user_id, order_expiration, asset_id, amount, receive_asset_id, receive_amount, 0, fee_amount, fee_id);
+             receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount fillOrKill:(BOOL)fillOrKill {
+  string jsonString = limit_order_create(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], user_id, order_expiration, asset_id, amount, receive_asset_id, receive_amount, @(fillOrKill).intValue, fee_amount, fee_id);
   
   return @(jsonString.c_str());
 }
   
-+ (NSString *)getLimitOrderOperation:(int)user_id expiration:(NSTimeInterval)expiration asset_id:(int)asset_id amount:(int64_t)amount receive_asset_id:(int)receive_asset_id receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount {
-  string jsonString= get_limit_order_create_json(user_id, expiration, asset_id, amount, receive_asset_id, receive_amount, 0, fee_amount, fee_id);
++ (NSString *)getLimitOrderOperation:(int)user_id expiration:(NSTimeInterval)expiration asset_id:(int)asset_id amount:(int64_t)amount receive_asset_id:(int)receive_asset_id receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount fillOrKill:(BOOL)fillOrKill {
+  string jsonString= get_limit_order_create_json(user_id, expiration, asset_id, amount, receive_asset_id, receive_amount, @(fillOrKill).intValue, fee_amount, fee_id);
   return @(jsonString.c_str());
 }
   
