@@ -222,6 +222,8 @@ string decrypt_memo_data(
                          string memo_json_str
                          );
 
+string transactionId_from_jsonstr(string jsonStr);
+
 string exchange_participate(
                           uint16_t ref_block_num,
                           string ref_block_id_hex_str,

@@ -144,6 +144,10 @@
     return @(jsonString.c_str());
 }
 
++ (NSString *)transactionIdFromSigned:(NSString *)jsonStr {
+    string jsonString = transactionId_from_jsonstr([jsonStr UTF8String]);
+    return @(jsonString.c_str());
+}
 
 + (void)resetDefaultPublicKey:(NSString *)str {
   set_default_public_key([str UTF8String]);

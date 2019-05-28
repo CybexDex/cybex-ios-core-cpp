@@ -649,6 +649,11 @@ string decrypt_memo_data(
   return m.get_message(memo_priv_key, memo_pub_key);
 } catch(...){return "";}}
 
+string transactionId_from_jsonstr(string jsonStr) {
+    struct signed_transaction signed_tx = fc::json::from_string(jsonStr).as<signed_transaction>();
+    return signed_tx.id().str();
+}
+
 void wallet_test() {
     printf("s");
 }

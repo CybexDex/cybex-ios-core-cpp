@@ -18,12 +18,13 @@ class ViewController: UIViewController {
 //        testSignMessage()
 //        testClaim()
 //
-//        testTransactionId()
+        testTransactionId()
 //        testTransactionWithMemoOperation()
         getActiveKeys()
 //        testDerivedOperation()
 //        testUpdateAccount()
-        testParticipateExchange()
+//        testParticipateExchange()
+        getTransactionIdFromSigned(str: testClaim())
     }
 
     func testParticipateExchange() {
@@ -65,19 +66,24 @@ class ViewController: UIViewController {
 
     }
 
-    func testClaim() {
-        let sign = BitShareCoordinator.getClaimedSign(0, block_id: "", expiration: 600, chain_id: "", fee_asset_id: 0, fee_amount: 0, deposit_to_account_id: 0, claimed_id: 0, claimed_asset_id: 0, claimed_amount: 0, claimed_own: "CYBLanbfQMeMHCkowkpD7CDV2t36WfXfLnrh")
+    func testClaim() -> String {
+        let sign = BitShareCoordinator.getClaimedSign(40, block_id: "2", expiration: 600, chain_id: "3", fee_asset_id: 0, fee_amount: 50, deposit_to_account_id: 10, claimed_id: 10, claimed_asset_id: 20, claimed_amount: 550, claimed_own: "CYBLanbfQMeMHCkowkpD7CDV2t36WfXfLnrh")
 
-        print(sign)
+        return sign
     }
 
-    func testTransactionWithMemoOperation() {
-        let operation = BitShareCoordinator.getTransterOperation(0, to_user_id: 0, asset_id: 0, amount: 0, fee_id: 0, fee_amount: 100, memo: "", from_memo_key: "", to_memo_key: "")
-        print(operation)
+    func testTransactionWithMemoOperation() -> String {
+        let operation = BitShareCoordinator.getTransterOperation(0, to_user_id: 20, asset_id: 0, amount: 20, fee_id: 0, fee_amount: 100, memo: "xxx", from_memo_key: "", to_memo_key: "")
+        return operation
     }
 
     func testTransactionId() {
         let id = BitShareCoordinator.getTransactionId(0, block_id: "", expiration: 600, chain_id: "", from_user_id: 0, to_user_id: 0, asset_id: 0, receive_asset_id: 0, amount: 0, fee_id: 0, fee_amount: 0, memo: "", from_memo_key: "", to_memo_key: "")
+        print(id)
+    }
+
+    func getTransactionIdFromSigned(str: String) {
+        let id = BitShareCoordinator.transactionId(fromSigned: str)
         print(id)
     }
 
