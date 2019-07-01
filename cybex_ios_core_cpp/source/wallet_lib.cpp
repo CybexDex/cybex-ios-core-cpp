@@ -10,6 +10,7 @@
 #include "transaction.hpp"
 #include "wallet_lib.hpp"
 #include "cybex_gateway_query.hpp"
+#include "nx_order_op.hpp"
 
 using namespace std;
 using namespace fc;
@@ -392,6 +393,48 @@ string limit_order_create(
   return fc::json::to_string(tx);
 } catch(...) {return "";}}
 
+string limit_order_create_by_side(
+                                  uint16_t ref_block_num,
+                                  string ref_block_id_hex_str,
+                                  uint32_t expiration, /* expiration time in utc seconds */
+                                  string chain_id_str,
+
+                                  unsigned_int seller_id, /* instance id of seller account */
+                                  uint32_t order_expiration,
+                                  unsigned_int sell_asset_id, /* instance id fo asset to be sold */
+                                  amount_type sell_amount, /* amount to be sold */
+                                  unsigned_int receive_asset_id, /* instance id of asset to receive */
+                                  amount_type min_to_receive, /* min asset to receive */
+                                  int fill_or_kill, /* 1 for true, 0 for false */
+                                  amount_type fee_amount, /* amount of fee */
+                                  unsigned_int fee_asset_id, /* instance id of asset to pay fee*/
+                                  bool is_buy
+) {
+    try {
+        fc::ecc::private_key active_priv_key = get_private_key("");
+
+        limit_order_create_operation o;
+        _set_limit_order_create_operation(o, seller_id, order_expiration,
+                                          sell_asset_id, sell_amount, receive_asset_id, min_to_receive, fill_or_kill, fee_amount, fee_asset_id);
+        struct order_side v;
+        v.is_buy = is_buy;
+        o.extensions.insert(v);
+
+        signed_transaction signed_tx;
+        _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+
+        signed_tx.operations.push_back(o);
+
+        chain_id_type chain_id(chain_id_str);
+        signed_tx.sign(active_priv_key, chain_id);
+        set_default_private_key("");
+
+        variant tx(signed_tx);
+        return fc::json::to_string(tx);
+    } catch(...) {return "";}
+}
+
+
 string get_limit_order_create_json(
                                    unsigned_int seller_id, /* instance id of seller account */
                                    uint32_t order_expiration,
@@ -728,4 +771,31 @@ string exchange_participate_json(
         variant op_json(o);
         return fc::json::to_string(op_json);
     } catch(...) {return "";}
+}
+
+
+string amend_order(string ref_order_id,
+                   string cutloss_px,
+                   string takeProfit_px,
+                   string exec_now_px,
+                   string expiration,
+                   string seller) {
+    try{
+        struct nx_order_amend_transaction trx;
+        digest_type::encoder enc;
+
+        trx.op.refId = ref_order_id;
+        trx.op.cutLossPx = cutloss_px;
+        trx.op.takeProfitPx = takeProfit_px;
+        trx.op.execNowPx = exec_now_px;
+        trx.op.expiration = expiration;
+        trx.op.seller = seller;
+
+        fc::ecc::private_key active_priv_key = get_private_key("");
+        fc::raw::pack(enc, trx.op);
+        trx.signer = active_priv_key.sign_compact(enc.result());
+        set_default_private_key("");
+
+        return fc::json::to_string(trx);
+    } catch(...){return "";}
 }

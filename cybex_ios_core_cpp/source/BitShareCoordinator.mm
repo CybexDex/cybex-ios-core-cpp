@@ -46,6 +46,16 @@
   
   return @(jsonString.c_str());
 }
+
++ (NSString *)getLimitOrderBySide:(bool)is_buy block_num:(int)block_num block_id:(NSString *)block_id
+                 expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+                    user_id:(int)user_id order_expiration:(NSTimeInterval)order_expiration
+                   asset_id:(int)asset_id amount:(int64_t)amount receive_asset_id:(int)receive_asset_id
+             receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount fillOrKill:(BOOL)fillOrKill {
+    string jsonString = limit_order_create_by_side(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], user_id, order_expiration, asset_id, amount, receive_asset_id, receive_amount, @(fillOrKill).intValue, fee_amount, fee_id, is_buy);
+
+    return @(jsonString.c_str());
+}
   
 + (NSString *)getLimitOrderOperation:(int)user_id expiration:(NSTimeInterval)expiration asset_id:(int)asset_id amount:(int64_t)amount receive_asset_id:(int)receive_asset_id receive_amount:(int64_t)receive_amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount fillOrKill:(BOOL)fillOrKill {
   string jsonString= get_limit_order_create_json(user_id, expiration, asset_id, amount, receive_asset_id, receive_amount, @(fillOrKill).intValue, fee_amount, fee_id);

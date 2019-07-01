@@ -18,14 +18,22 @@ class ViewController: UIViewController {
 //        testSignMessage()
 //        testClaim()
 //
-        testTransactionId()
+//        testAmendOrder()
+//        testTransactionId()
 //        testTransactionWithMemoOperation()
-        getActiveKeys()
+//        getActiveKeys()
 //        testDerivedOperation()
 //        testUpdateAccount()
 //        testParticipateExchange()
-        getTransactionIdFromSigned(str: testClaim())
+        getTransactionIdFromSigned(str: testAmendOrder())
     }
+
+    func testAmendOrder() -> String {
+        let result = NXSig.amendOrder(with: "7e4fb06fa75bd1f8e49aeee3f4862914db678fdb", cutLossPx: "7600.01", takeProfitPx: "7200.04", execNowPx: "0", expiration: "1561507200", seller: "27")
+        print(result)
+        return result
+    }
+
 
     func testParticipateExchange() {
         let jsonStr = BitShareCoordinator.exchangeParticipate(0, block_id: "0", expiration: 600, chain_id: "0", user_id: 0, exchange_id: 0, asset_id: 2, amount: 20, fee_id: 0, fee_amount: 40)
