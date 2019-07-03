@@ -268,9 +268,4 @@ string exchange_participate_json(
 
 
 /* BBB Only */
-string amend_order(string ref_order_id,
-                   string cutloss_px,
-                   string takeProfit_px,
-                   string exec_now_px,
-                   string expiration,
-                   string seller);
+string amend_order(string ss);

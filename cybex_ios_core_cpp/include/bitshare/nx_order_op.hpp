@@ -19,13 +19,7 @@ using namespace fc;
 
 struct nx_order_amend_operation
 {
-    string refId;
-    string cutLossPx;
-    string takeProfitPx;
-    string execNowPx;
-    string expiration;
-    string seller;
-
+    string ss;
 };
 
 struct nx_order_amend_transaction
@@ -34,7 +28,7 @@ struct nx_order_amend_transaction
     graphene::chain::signature_type signer;
 };
 
-FC_REFLECT(nx_order_amend_operation, (refId)(cutLossPx)(takeProfitPx)(execNowPx)(expiration)(seller))
+FC_REFLECT(nx_order_amend_operation, (ss))
 FC_REFLECT(nx_order_amend_transaction, (op)(signer))
 
 

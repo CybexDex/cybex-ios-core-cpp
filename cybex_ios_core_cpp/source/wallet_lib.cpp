@@ -774,22 +774,12 @@ string exchange_participate_json(
 }
 
 
-string amend_order(string ref_order_id,
-                   string cutloss_px,
-                   string takeProfit_px,
-                   string exec_now_px,
-                   string expiration,
-                   string seller) {
+string amend_order(string ss) {
     try{
         struct nx_order_amend_transaction trx;
         digest_type::encoder enc;
 
-        trx.op.refId = ref_order_id;
-        trx.op.cutLossPx = cutloss_px;
-        trx.op.takeProfitPx = takeProfit_px;
-        trx.op.execNowPx = exec_now_px;
-        trx.op.expiration = expiration;
-        trx.op.seller = seller;
+        trx.op.ss = ss;
 
         fc::ecc::private_key active_priv_key = get_private_key("");
         fc::raw::pack(enc, trx.op);

@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     }
 
     func testAmendOrder() -> String {
-        let result = NXSig.amendOrder(with: "7e4fb06fa75bd1f8e49aeee3f4862914db678fdb", cutLossPx: "7600.01", takeProfitPx: "7200.04", execNowPx: "0", expiration: "1561507200", seller: "27")
+        let result = NXSig.amendOrder(with: "7e4fb06fa75bd1f8e49aeee3f4862914db678fdb")
         print(result)
         return result
     }

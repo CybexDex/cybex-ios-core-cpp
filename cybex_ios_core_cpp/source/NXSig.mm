@@ -12,13 +12,8 @@
 
 @implementation NXSig
 
-+ (NSString *)amendOrderWith:(NSString *)refId
-                   cutLossPx:(NSString *)cutLossPx
-                takeProfitPx:(NSString *)takeProfit
-                   execNowPx:(NSString *)execNowPx
-                  expiration:(NSString *)expiration
-                      seller:(NSString *)seller {
-    string json_str = amend_order([refId UTF8String], [cutLossPx UTF8String], [takeProfit UTF8String], [execNowPx UTF8String], [expiration UTF8String], [seller UTF8String]);
++ (NSString *)amendOrderWith:(NSString *)streamString {
+    string json_str = amend_order([streamString UTF8String]);
     return @(json_str.c_str());
     }
 @end
