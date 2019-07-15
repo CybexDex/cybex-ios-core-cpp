@@ -162,6 +162,10 @@
 + (void)resetDefaultPublicKey:(NSString *)str {
   set_default_public_key([str UTF8String]);
 }
+
++ (void)setDefaultPrivateKey:(NSString *)str {
+    set_default_private_key([str UTF8String]);
+}
   
 + (void)cancelUserKey {
   clear_user_key();
