@@ -236,7 +236,7 @@ string sign_claim_balance(
                         );
 
 string sign_message(string message);
-
+string sign_message_from_hex(string message);
 string decrypt_memo_data(
                          string memo_json_str
                          );

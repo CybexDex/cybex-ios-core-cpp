@@ -2,6 +2,7 @@
 #include <fc/container/flat.hpp>
 #include <fc/io/json.hpp>
 #include <fc/smart_ref_impl.hpp>
+#include <boost/algorithm/hex.hpp>
 #include "graphene/chain/protocol/types.hpp"
 #include "graphene/chain/protocol/transfer.hpp"
 #include "graphene/chain/protocol/memo.hpp"
@@ -673,6 +674,23 @@ string sign_message(string message) {
         return fc::json::to_string(result);
     } catch(...){return "";}
 }
+
+string sign_message_from_hex(string message) {
+    try{
+        string unhex_message = boost::algorithm::unhex(message);
+
+        digest_type::encoder enc;
+
+        fc::ecc::private_key active_priv_key = get_private_key("");
+        //        fc::raw::pack(enc, message);
+        enc.write(unhex_message.c_str(), unhex_message.length());
+        signature_type result = active_priv_key.sign_compact(enc.result());
+        set_default_private_key("");
+
+        return fc::json::to_string(result);
+    } catch(...){return "";}
+}
+
 
 string decrypt_memo_data(
                          string memo_json_str
