@@ -25,12 +25,12 @@ echo "BUILD_DIR is '${SYMROOT}'"
 # Build with both targets
 ######################
 echo "Clean ${TARGET_NAME} for simulator"
-xcodebuild -destination 'platform=iOS Simulator,name=iPhone X,OS=latest' -scheme ${SCHEME} clean
+xcodebuild -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' -scheme ${SCHEME} clean
 echo "Clean ${TARGET_NAME} for generic device"
 xcodebuild -configuration ${CONFIGURATION} -destination generic/platform=iOS -scheme ${SCHEME} clean
 
 echo "Build ${PROJECT_NAME} for simulator"
-xcrun xcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${SCHEME} -configuration ${CONFIGURATION} -destination 'platform=iOS Simulator,name=iPhone X,OS=latest' -sdk iphonesimulator
+xcrun xcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${SCHEME} -configuration ${CONFIGURATION} -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' -sdk iphonesimulator
 
 echo "Build ${PROJECT_NAME} for generice device"
 xcrun xcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme ${SCHEME} -configuration ${CONFIGURATION} -destination generic/platform=iOS -sdk iphoneos
