@@ -219,6 +219,60 @@ string transfer(
   return fc::json::to_string(tx);
 } catch(...) {return "";}}
 
+string transferBBB(
+                   uint16_t ref_block_num,
+                   string ref_block_id_hex_str,
+                   uint32_t expiration, /* expiration time in utc seconds */
+                   string chain_id_str,
+                   
+                   unsigned_int from_id, /* instance id of from account */
+                   unsigned_int to_id, /* instance id of to account */
+                   amount_type amount, /* amount to be transfered */
+                   unsigned_int asset_id, /* instance id of asset to be transfered */
+                   amount_type fee_amount, /* amount of fee */
+                   unsigned_int fee_asset_id, /* instance id of asset to pay fee */
+                   string memo, /* memo data to be transfered, if no memo data, just use empty string */
+                   string from_memo_pub_key, /* public memo */
+                   string to_memo_pub_key,
+                   bool is_two,
+                   bool use_gateway,
+                   unsigned_int bbb_asset_id,
+                   unsigned_int gateway_account_id,
+                   string gateway_memo_key
+                   ) {
+    try{
+        fc::ecc::private_key active_priv_key = get_private_key("");
+        
+        transfer_operation o;
+        transfer_operation o2;
+        
+        if (is_two) {
+            _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
+            _set_transfer_operation(o, to_id, use_gateway ? gateway_account_id : from_id, amount, asset_id == bbb_asset_id ? (unsigned_int)27 : bbb_asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, gateway_memo_key, 0, "");
+        } else {
+            _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
+        }
+        
+        signed_transaction signed_tx;
+        _init_transaction(signed_tx, ref_block_num, ref_block_id_hex_str, expiration);
+        
+        if (is_two) {
+            signed_tx.operations.push_back(o);
+            signed_tx.operations.push_back(o2);
+        } else {
+            signed_tx.operations.push_back(o);
+        }
+        
+        chain_id_type chain_id(chain_id_str);
+        signed_tx.sign(active_priv_key, chain_id);
+        set_default_private_key("");
+        
+        variant tx(signed_tx);
+        return fc::json::to_string(tx);
+    } catch(...) {return "";}
+    
+}
+
 string transfer_with_vesting(
                              uint16_t ref_block_num,
                              string ref_block_id_hex_str,

@@ -103,6 +103,16 @@
   
   return @(jsonString.c_str());
 }
++ (NSString *)getTransactionForBBB:(int)block_num block_id:(NSString *)block_id
+  expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
+from_user_id:(int)from_user_id to_user_id:(int)to_user_id
+    asset_id:(int)asset_id receive_asset_id:(int)receive_asset_id
+                            amount:(int64_t)amount fee_id:(int)fee_id fee_amount:(int64_t)fee_amount memo:(NSString *)memo from_memo_key:(NSString *)from_memo_key to_memo_key:(NSString *)to_memo_key isTwo:(BOOL)isTwo useGateway:(BOOL) useGateway bbb_asset_id:(int)bbb_asset_id gateway_account_id:(int)gateway_account_id gateway_memo_key:(NSString *)gateway_memo_key {
+    string jsonString = transferBBB(block_num, [block_id UTF8String], expiration, [chain_id UTF8String], from_user_id, to_user_id, amount, asset_id, fee_amount, fee_id, [memo UTF8String], [from_memo_key UTF8String], [to_memo_key UTF8String], isTwo, useGateway, bbb_asset_id, gateway_account_id, [gateway_memo_key UTF8String])
+     
+     return @(jsonString.c_str());
+}
+
 
 + (NSString *)getTransactionWithVesting:(int)block_num block_id:(NSString *)block_id
                              expiration:(NSTimeInterval)expiration chain_id:(NSString *)chain_id
