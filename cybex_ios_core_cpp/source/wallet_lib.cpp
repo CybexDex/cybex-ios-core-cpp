@@ -248,7 +248,7 @@ string transferBBB(
         
         if (is_two) {
             _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
-            _set_transfer_operation(o, to_id, use_gateway ? gateway_account_id : from_id, amount, asset_id == bbb_asset_id ? (unsigned_int)27 : bbb_asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, gateway_memo_key, 0, "");
+            _set_transfer_operation(o2, to_id, use_gateway ? gateway_account_id : from_id, amount, asset_id == bbb_asset_id ? (unsigned_int)27 : bbb_asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, gateway_memo_key, 0, "");
         } else {
             _set_transfer_operation(o, from_id, to_id, amount, asset_id, fee_amount, fee_asset_id, memo, from_memo_pub_key, to_memo_pub_key, 0, "");
         }
